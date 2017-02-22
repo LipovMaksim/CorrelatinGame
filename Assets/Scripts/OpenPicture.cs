@@ -22,14 +22,14 @@ public class OpenPicture : MonoBehaviour {
 
 		if (path != "") {
 			Debug.Log ("Picture img choised: " + path);
-			if (backgroundImgChoised != null) {
-				backgroundImgChoised (path);
+			if (pictureChoised != null) {
+				pictureChoised (path);
 			}
 		}
 	}
 
-	public delegate void BackgroundImgChoisedEvent (string path);
-	public BackgroundImgChoisedEvent backgroundImgChoised;
+	public delegate void PictureChoisedEvent (string path);
+	public PictureChoisedEvent pictureChoised;
 
 	// Update is called once per frame
 	void Update () {
