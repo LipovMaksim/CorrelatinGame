@@ -13,12 +13,6 @@ public class GameModel : MonoBehaviour {
 	[SerializeField]
 	private ViewController viewController;
 	[SerializeField]
-	private MainMenuElement continueButton;
-	[SerializeField]
-	private MainMenuElement toMainMenuButton;
-	[SerializeField]
-	private MainMenuElement menuButton;
-	[SerializeField]
 	private Transform menu;
 
 	public GamePicture fish; //на время
@@ -34,9 +28,9 @@ public class GameModel : MonoBehaviour {
 
 		fish.draggingEnd += pictureDroped;
 		fish2.draggingEnd += pictureDroped;
-		toMainMenuButton.toMainMenuButtonPresed += toMainMenu;
+		/*toMainMenuButton.toMainMenuButtonPresed += toMainMenu;
 		continueButton.continueButtonPresed += continueGame;
-		menuButton.showMenuButtonPresed += showMenu;
+		menuButton.showMenuButtonPresed += showMenu;*/
 	}
 
 	void pictureDroped (DraggableObject obj, Vector3 position){

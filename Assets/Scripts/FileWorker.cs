@@ -10,4 +10,12 @@ public class FileWorker {
 		www.LoadImageIntoTexture (tex);
 		return tex;
 	}
+
+	static public bool writeLevelInFile(string path, string backgroungURL, GamePicture[] pictures){
+
+
+
+
+		return true;
+	}
 }
