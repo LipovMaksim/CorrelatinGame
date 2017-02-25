@@ -7,6 +7,7 @@ public class GameField : MonoBehaviour {
 	public static float wUnitsField = 10;
 	public static float hUnitsField = 7;
 
+	public string url = "";
 
 	private SpriteRenderer spriteRenderer;
 
@@ -17,6 +18,7 @@ public class GameField : MonoBehaviour {
 		Texture2D newTex = FileWorker.readImage (path);
 
 		if (newTex != null){
+			url = path;
 			Sprite s;
 			//Побольшей стороне
 			if (false){

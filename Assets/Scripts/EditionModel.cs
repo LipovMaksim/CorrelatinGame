@@ -24,6 +24,8 @@ public class EditionModel : MonoBehaviour {
 
 		btnController.backgroundImgChoised += openBackgroundImg;
 		btnController.pictureToPanelChoised += openNewPicture;
+		btnController.saveLevel += saveLevel;
+		btnController.openLevel += openLevel;
 
 		pictureToolBarPositions = new Vector3[pictures.Length];
 		for (int i = 0; i < pictures.Length; i++) {
@@ -91,5 +93,16 @@ public class EditionModel : MonoBehaviour {
 		if (i < pictures.Length) {
 			pictures [i].setPicture (path);
 		}	
+	}
+
+	private void saveLevel (string path){
+
+		FileWorker.writeLevelInFile (path, field, pictures, "Level name", "Level description");
+	}
+
+	private void openLevel (string path){
+		string name = "";
+		string description = "";
+		FileWorker.readLevelFromFile (path, ref field, ref pictures, ref name, ref description);
 	}
 }

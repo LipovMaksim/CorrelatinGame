@@ -10,6 +10,8 @@ public class GamePicture : DraggableObject {
 	public float wUnitsPicture = 2.5f;
 	public float hUnitsPicture = 2.5f;
 
+	public string url = "";
+
 	void Awake(){
 		spriteRenderer = GetComponent <SpriteRenderer> ();
 		positionInToolBar = transform.position;
@@ -19,6 +21,7 @@ public class GamePicture : DraggableObject {
 		Texture2D newTex = FileWorker.readImage (path);
 
 		if (newTex != null) {
+			url = path;
 			Sprite s;
 			//Побольшей стороне
 			s = Sprite.Create (newTex, new Rect (0, 0, newTex.width, newTex.height), new Vector2 (0.5f, 0.5f), 
@@ -50,5 +53,9 @@ public class GamePicture : DraggableObject {
 			DestroyImmediate (sr.sprite, true);
 
 		GetComponent<CircleCollider2D> ().enabled = false;
+	}
+
+	public bool isActive(){
+		return GetComponent <CircleCollider2D> ().enabled;
 	}
 }
