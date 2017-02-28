@@ -9,8 +9,6 @@ public class EditionModel : MonoBehaviour {
 	[SerializeField]
 	private GameField field;
 	[SerializeField]
-	private SpriteRenderer fieldSprite;
-	[SerializeField]
 	private GamePicture [] pictures;
 	[SerializeField]
 	private Transform basket;
@@ -91,7 +89,7 @@ public class EditionModel : MonoBehaviour {
 		int i = 0;
 		for (; i < pictures.Length && pictures[i].GetComponent<SpriteRenderer>().sprite != null; i++);
 		if (i < pictures.Length) {
-			pictures [i].setPicture (path);
+			pictures [i].initiatePicture (path);
 		}	
 	}
 
@@ -103,6 +101,6 @@ public class EditionModel : MonoBehaviour {
 	private void openLevel (string path){
 		string name = "";
 		string description = "";
-		FileWorker.readLevelFromFile (path, ref field, ref pictures, ref name, ref description);
+		FileWorker.readLevelFromFileForEdition (path, ref field, ref pictures, ref name, ref description);
 	}
 }

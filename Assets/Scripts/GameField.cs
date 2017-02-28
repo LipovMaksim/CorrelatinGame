@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class GameField : MonoBehaviour {
 
+	[SerializeField]
+	private GamePicture gamePicturePrefab;
+
 	public static float wUnitsField = 10;
 	public static float hUnitsField = 7;
 
 	public string url = "";
 
+	private List <GamePicture> gamePictures = new List <GamePicture> ();
 	private SpriteRenderer spriteRenderer;
 
 	void Awake (){
@@ -52,5 +56,11 @@ public class GameField : MonoBehaviour {
 			&& (transform.position.x + wUnitsField / 2 >= gp.transform.position.x + gp.wUnitsPicture / 2)
 			&& (transform.position.y - hUnitsField / 2 <= gp.transform.position.y - gp.hUnitsPicture / 2)
 			&& (transform.position.y + hUnitsField / 2 >= gp.transform.position.y + gp.hUnitsPicture / 2);
+	}
+
+	public void createPicture (string url, Vector3 position) {
+		GamePicture gp = Instantiate (gamePicturePrefab, position, transform.rotation, transform) as GamePicture;
+		gamePictures.Add (gp);
+		gp.setPicture (url);
 	}
 }

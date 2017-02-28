@@ -7,27 +7,32 @@ public class GameModel : MonoBehaviour {
 	[SerializeField]
 	private GameField gameField;
 	[SerializeField]
-	private AudioClip bubbles;
-	[SerializeField]
-	private AudioClip victory;
-	[SerializeField]
 	private ViewController viewController;
+	[SerializeField]
+	private AudioController audioController;
+	[SerializeField]
+	private GamePicture [] pictures;
 	[SerializeField]
 	private Transform menu;
 
-	public GamePicture fish; //на время
-	public GamePicture fish2; //на время
 
-	private Dictionary <GamePicture, Vector3> gamePicturePlaces = new Dictionary<GamePicture, Vector3>();
+	//private Dictionary <GamePicture, Vector3> gamePicturePlaces = new Dictionary<GamePicture, Vector3>();
 	private bool gameIsActive = true;
-
+	private string gameUrl = "E:\\Google Drive\\Диплом\\CorrelatinGame\\Components\\Levels\\test.cglvl";
 	void Awake () {
-		MonoBehaviour[] b = gameField.GetComponents<MonoBehaviour> ();
-		gamePicturePlaces.Add (fish, new Vector3 (-3.07F, 1.8F, 0F));
+
+		string name = "", description = "";
+		FileWorker.readLevelFromFileForGame (gameUrl, ref gameField, ref pictures, ref name, ref description); 
+
+		for (int i = 0; i < pictures.Length; i++) {
+			pictures [i].draggingEnd += pictureDroped;
+		}
+		//MonoBehaviour[] b = gameField.GetComponents<MonoBehaviour> ();
+		/*gamePicturePlaces.Add (fish, new Vector3 (-3.07F, 1.8F, 0F));
 		gamePicturePlaces.Add (fish2, new Vector3 (-3.07F, 1.8F, 0F));
 
 		fish.draggingEnd += pictureDroped;
-		fish2.draggingEnd += pictureDroped;
+		fish2.draggingEnd += pictureDroped;*/
 		/*toMainMenuButton.toMainMenuButtonPresed += toMainMenu;
 		continueButton.continueButtonPresed += continueGame;
 		menuButton.showMenuButtonPresed += showMenu;*/
@@ -37,32 +42,28 @@ public class GameModel : MonoBehaviour {
 		const float R = 0.01F; // Радиус зоны попадания на картинку
 		GamePicture gp = (GamePicture)obj;
 		if (gp != null) {
-			Collider2D[] colliders = Physics2D.OverlapCircleAll(gameField.transform.position + gamePicturePlaces[gp], R);
-			if (colliders.Length > 0) {
-				bool contane = false;
-				for (int i = 0; i < colliders.Length; i++) {
-					if (colliders [i].gameObject == gp.gameObject) {
-						contane = true;
-					}
-				}
-				if (contane) {
-					//картинка сопоставлена правильно (музыка, эфекты)
-					AudioSource.PlayClipAtPoint(bubbles, transform.position); //Звук
-					gamePicturePlaces.Remove(gp);
-					Destroy (gp.gameObject);
-					checkForGameOver ();
-						
-					return;
-				}
+			if (gp.onTargetPosition ()) {
+				//картинка сопоставлена правильно (музыка, эфекты)
+				audioController.playBubblesSound();
+				//gamePicturePlaces.Remove(gp);
+				//Destroy (gp.gameObject);
+				gp.reset ();
+				checkForGameOver ();
+				return;
 			}
 		}
 		gp.returnToPreviousPosition ();
 	}
 
 	private void checkForGameOver() {
-		if (gamePicturePlaces.Count == 0) {
+		bool empty = true;
+		for (int i = 0; i < pictures.Length; i++) {
+			if (pictures[i].isActive())
+				empty = false;
+		}
+		if (empty) {
 			viewController.showCangratulations ();
-			AudioSource.PlayClipAtPoint(victory	, transform.position);
+			audioController.playVictorySound ();
 			gameIsActive = false;
 		}
 	}

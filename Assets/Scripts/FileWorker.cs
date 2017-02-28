@@ -32,13 +32,13 @@ public class FileWorker {
 		return res;
 	}
 
-	static public void readLevelFromFile(string path, ref GameField field, ref GamePicture[] pictures, ref string name, ref string description){
+	static public void readLevelFromFileForEdition(string path, ref GameField field, ref GamePicture[] pictures, ref string name, ref string description){
 		StreamReader file = new StreamReader (path);
 		name = file.ReadLine ();
 		description = file.ReadLine ();
 		field.setBackgroundImg(file.ReadLine ());
 		for (int i = 0; i < pictures.Length && file.Peek() != -1; i++) {
-			pictures[i].setPicture(file.ReadLine ());
+			pictures[i].initiatePicture(file.ReadLine ());
 			pictures [i].hUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
 			pictures [i].wUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
 			float x = System.Convert.ToSingle(file.ReadLine ());
@@ -47,4 +47,23 @@ public class FileWorker {
 		}
 		file.Close ();
 	}
+
+	static public void readLevelFromFileForGame(string path, ref GameField field, ref GamePicture[] pictures, ref string name, ref string description){
+		StreamReader file = new StreamReader (path);
+		name = file.ReadLine ();
+		description = file.ReadLine ();
+		field.setBackgroundImg(file.ReadLine ());
+		for (int i = 0; i < pictures.Length && file.Peek() != -1; i++) {
+			string url = file.ReadLine ();
+			pictures[i].initiatePicture(url);
+			pictures [i].hUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
+			pictures [i].wUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
+			float x = System.Convert.ToSingle(file.ReadLine ());
+			float y = System.Convert.ToSingle(file.ReadLine ());
+			pictures [i].setTargetPosition (new Vector3 (x, y, pictures [i].transform.position.z));
+			field.createPicture (url, new Vector3 (x, y, -1));
+		}
+		file.Close ();
+	}
+
 }
