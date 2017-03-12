@@ -6,6 +6,8 @@ public class GameField : MonoBehaviour {
 
 	[SerializeField]
 	private GamePicture gamePicturePrefab;
+	[SerializeField]
+	private Color pictureShadowColor;
 
 	public static float wUnitsField = 10;
 	public static float hUnitsField = 7;
@@ -58,9 +60,15 @@ public class GameField : MonoBehaviour {
 			&& (transform.position.y + hUnitsField / 2 >= gp.transform.position.y + gp.hUnitsPicture / 2);
 	}
 
-	public void createPicture (string url, Vector3 position) {
+	public GamePicture createPicture (string url, Vector3 position, float size, float angle, bool flipX = false, bool flipY = false) {
 		GamePicture gp = Instantiate (gamePicturePrefab, position, transform.rotation, transform) as GamePicture;
 		gamePictures.Add (gp);
 		gp.setPicture (url);
+		gp.setSize (size);
+		gp.setRotation (angle);
+		gp.setFlipX (flipX);
+		gp.setFlipY (flipY);
+		gp.setSpriteColor (pictureShadowColor);
+		return gp;
 	}
 }

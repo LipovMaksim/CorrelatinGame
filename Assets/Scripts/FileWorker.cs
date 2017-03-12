@@ -21,10 +21,12 @@ public class FileWorker {
 		for (int i = 0; i < pictures.Length; i++) {
 			if (pictures [i].isActive () && field.contanes (pictures [i])) {
 				file.WriteLine (pictures [i].url);
-				file.WriteLine (pictures [i].hUnitsPicture);
-				file.WriteLine (pictures [i].wUnitsPicture);
+				file.WriteLine (pictures [i].getSize());
+				file.WriteLine (pictures [i].getRotationAngle());
 				file.WriteLine (pictures [i].transform.position.x);
 				file.WriteLine (pictures [i].transform.position.y);
+				file.WriteLine ((pictures [i].getFlipX() ? 1 : 0));
+				file.WriteLine ((pictures [i].getFlipY() ? 1 : 0));
 				res = true;
 			}
 		}
@@ -39,11 +41,15 @@ public class FileWorker {
 		field.setBackgroundImg(file.ReadLine ());
 		for (int i = 0; i < pictures.Length && file.Peek() != -1; i++) {
 			pictures[i].initiatePicture(file.ReadLine ());
-			pictures [i].hUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
-			pictures [i].wUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
+			pictures [i].setSize (System.Convert.ToSingle(file.ReadLine ()));
+			pictures [i].setRotation (System.Convert.ToSingle(file.ReadLine ())); 
 			float x = System.Convert.ToSingle(file.ReadLine ());
 			float y = System.Convert.ToSingle(file.ReadLine ());
 			pictures [i].transform.position = new Vector3 (x, y, pictures [i].transform.position.z);
+			bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+			bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+			pictures [i].setFlipX (flipX);
+			pictures [i].setFlipY (flipY);
 		}
 		file.Close ();
 	}
@@ -56,12 +62,18 @@ public class FileWorker {
 		for (int i = 0; i < pictures.Length && file.Peek() != -1; i++) {
 			string url = file.ReadLine ();
 			pictures[i].initiatePicture(url);
-			pictures [i].hUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
-			pictures [i].wUnitsPicture = System.Convert.ToSingle(file.ReadLine ()); //Пока не реализовано
+			float size = System.Convert.ToSingle (file.ReadLine ());
+			float angle = System.Convert.ToSingle (file.ReadLine ());
+			pictures [i].setSize (size);
+			pictures [i].setRotation (angle); 
 			float x = System.Convert.ToSingle(file.ReadLine ());
 			float y = System.Convert.ToSingle(file.ReadLine ());
-			pictures [i].setTargetPosition (new Vector3 (x, y, pictures [i].transform.position.z));
-			field.createPicture (url, new Vector3 (x, y, -1));
+			//pictures [i].setTargetPosition (new Vector3 (x, y, pictures [i].transform.position.z));
+			bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+			bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+			pictures [i].setFlipX (flipX);
+			pictures [i].setFlipY (flipY);
+			pictures [i].setTarget(field.createPicture (url, new Vector3 (x, y, -1), size, angle, flipX, flipY));
 		}
 		file.Close ();
 	}

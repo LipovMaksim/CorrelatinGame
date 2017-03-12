@@ -28,6 +28,10 @@ public class ButtonController : MonoBehaviour {
 	[SerializeField]
 	private Button openLevelBtn;
 	[SerializeField]
+	private Button mirrorVert;
+	[SerializeField]
+	private Button mirrorHor;
+	[SerializeField]
 	private GameObject menu; //Если не указывать, примется объект на котором лежит скрипт
 
 
@@ -43,6 +47,8 @@ public class ButtonController : MonoBehaviour {
 		if (addPictureToPanelBtn != null)		addPictureToPanelBtn.buttonPresed		+= addPictureToPanelAction;
 		if (saveLevelBtn != null)				saveLevelBtn.buttonPresed				+= saveLevelAction;
 		if (openLevelBtn != null)				openLevelBtn.buttonPresed				+= openLevelAction;
+		if (mirrorVert != null)					mirrorVert.buttonPresed					+= mirrorVertAction;
+		if (mirrorHor != null)					mirrorHor.buttonPresed					+= mirrorHorAction;
 
 		if (menu == null)	menu = gameObject;
 	}
@@ -141,5 +147,18 @@ public class ButtonController : MonoBehaviour {
 	}
 	public delegate void OpenLevelEvent (string path);
 	public OpenLevelEvent openLevel;
+
+	private void mirrorVertAction () {
+		mirrorVertButtnPresed ();
+	}
+	public delegate void MirrorVertButtnPresedEvent ();
+	public MirrorVertButtnPresedEvent mirrorVertButtnPresed;
+
+	private void mirrorHorAction () {
+		mirrorHorButtnPresed ();
+	}
+	public delegate void MirrorHorButtnPresedEvent ();
+	public MirrorHorButtnPresedEvent mirrorHorButtnPresed;
+
 		
 }

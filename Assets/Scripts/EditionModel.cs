@@ -12,10 +12,13 @@ public class EditionModel : MonoBehaviour {
 	private GamePicture [] pictures;
 	[SerializeField]
 	private Transform basket;
+	[SerializeField]
+	private Slider sizeSlider;
+	[SerializeField]
+	private Slider rotationSlider;
 
 
-
-
+	private GamePicture currentPcture = null;
 	private Vector3 [] pictureToolBarPositions; 
 
 	void Awake() {
@@ -24,6 +27,10 @@ public class EditionModel : MonoBehaviour {
 		btnController.pictureToPanelChoised += openNewPicture;
 		btnController.saveLevel += saveLevel;
 		btnController.openLevel += openLevel;
+		btnController.mirrorVertButtnPresed += mirrorVertCurrentPicture;
+		btnController.mirrorHorButtnPresed += mirrorHorCurrentPicture;
+		sizeSlider.valueChanged += sizeSliderValueChanged;
+		rotationSlider.valueChanged += rotationSliderValueChanged;
 
 		pictureToolBarPositions = new Vector3[pictures.Length];
 		for (int i = 0; i < pictures.Length; i++) {
@@ -40,11 +47,13 @@ public class EditionModel : MonoBehaviour {
 	void pictureDroped (DraggableObject obj, Vector3 position){
 		
 		GamePicture gp = (GamePicture)obj;
+		setCurrentPicture (gp);
 		if (gp != null) {
 			//Перемещение в карзину
 			Collider2D[] colliders = Physics2D.OverlapCircleAll (new Vector2 (basket.position.x, basket.position.y), 0.2f);
 			if (contanes(colliders, gp.gameObject)) {
 				gp.reset (); 
+				setCurrentPicture (null);
 				return;
 			}
 
@@ -102,5 +111,41 @@ public class EditionModel : MonoBehaviour {
 		string name = "";
 		string description = "";
 		FileWorker.readLevelFromFileForEdition (path, ref field, ref pictures, ref name, ref description);
+	}
+
+	public void setCurrentPicture (GamePicture gp) {
+		if (gp == null) {
+			currentPcture.resetCurrent ();
+			return;
+		}
+		if (currentPcture != gp) {
+			if (currentPcture != null) {
+				currentPcture.resetCurrent ();
+			}
+			currentPcture = gp;
+			currentPcture.setCurrent ();
+			sizeSlider.setValue (currentPcture.getSize ());
+			rotationSlider.setValue (currentPcture.getRotationAngle());
+		}
+	}
+
+	private void mirrorVertCurrentPicture () {
+		if (currentPcture != null)
+			currentPcture.flipX ();
+	}
+
+	private void mirrorHorCurrentPicture () {
+		if (currentPcture != null)
+			currentPcture.flipY ();
+	}
+
+	private void sizeSliderValueChanged (float val) {
+		if (currentPcture != null)
+			currentPcture.setSize (val);
+	}
+
+	private void rotationSliderValueChanged (float val) {
+		if (currentPcture != null)
+			currentPcture.setRotation (val);
 	}
 }

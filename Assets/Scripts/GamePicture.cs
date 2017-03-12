@@ -3,31 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GamePicture : DraggableObject {
+	[SerializeField]
+	private SpriteRenderer frame;
+
+
+	private Color trueColor = new Color (255, 255, 255, 255);
 
 	public Vector3 positionInToolBar;
 	private SpriteRenderer spriteRenderer;
 
+	private GamePicture target;
 	private Vector2 targetPosition;
-	public float wUnitsPicture = 2.5f;
-	public float hUnitsPicture = 2.5f;
+	public float wUnitsPicture = 2f;
+	public float hUnitsPicture = 2f;
 
 	public string url = "";
 
 	void Awake(){
 		spriteRenderer = GetComponent <SpriteRenderer> ();
+		//frame = GetComponentInChildren <SpriteRenderer> ();
 		positionInToolBar = transform.position;
 	}
 
 	public void setTargetPosition (Vector2 tp) {
 		targetPosition = tp;
 	}
+	public void setTarget (GamePicture t) {
+		target = t;
+	}
 
 	public bool onTargetPosition (float esp = 1) {
 		if (targetPosition == null)
 			return false;
-		float a = Mathf.Abs (targetPosition.x - transform.position.x);
-		float b = Mathf.Abs (targetPosition.y - transform.position.y);
-		return Mathf.Sqrt (a * a + b * b) < esp;
+		float a = Mathf.Abs (target.transform.position.x - transform.position.x);
+		float b = Mathf.Abs (target.transform.position.y - transform.position.y);
+		if (Mathf.Sqrt (a * a + b * b) < esp) {
+			target.setSpriteColor (trueColor);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void initiatePicture(string path){
@@ -52,6 +67,9 @@ public class GamePicture : DraggableObject {
 	public void reset(){
 		transform.position = positionInToolBar;
 		removeSprite ();
+		setSize (1f);
+		spriteRenderer.flipX = false;
+		spriteRenderer.flipY = false;
 	}
 
 	public void returnToPreviousPosition (){
@@ -80,5 +98,57 @@ public class GamePicture : DraggableObject {
 
 	public bool isActive(){
 		return GetComponent <CircleCollider2D> ().enabled;
+	}
+
+	public void setCurrent () {
+		frame.enabled = true;
+	}
+
+	public void resetCurrent () {
+		frame.enabled = false;
+	}
+
+	public void flipX () {
+		spriteRenderer.flipX = !spriteRenderer.flipX;
+	}
+
+	public void flipY () {
+		spriteRenderer.flipY = !spriteRenderer.flipY;
+	}
+
+	public void setSize (float scale) {
+		transform.localScale = new Vector3 (scale, scale, 1);
+	}
+
+	public float getSize () {
+		return transform.localScale.x;
+	}
+
+	public void setRotation (float angle) {
+		transform.localRotation = new Quaternion(0, 0, angle, 1);
+	}
+
+	public float getRotationAngle () {
+		return transform.localRotation.z;
+	}
+
+	public void setFlipX (bool val) {
+		spriteRenderer.flipX = val;
+	}
+
+	public void setFlipY (bool val) {
+		spriteRenderer.flipY = val;
+	}
+
+	public bool getFlipX () {
+		return spriteRenderer.flipX;
+	}
+
+	public bool getFlipY () {
+		return spriteRenderer.flipY;
+	}
+
+	public void setSpriteColor (Color c) {
+		spriteRenderer.color = c;
 	}
 }
