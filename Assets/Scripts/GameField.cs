@@ -34,6 +34,8 @@ public class GameField : MonoBehaviour {
 			//Заполнение
 			s = Sprite.Create(newTex, zapolnenie (newTex.width,newTex.height, wUnitsField, hUnitsField), new Vector2(0.5f, 0.5f),
 				(newTex.width / wUnitsField < newTex.height / hUnitsField ? newTex.width / wUnitsField : newTex.height / hUnitsField));
+			if (spriteRenderer == null)
+				spriteRenderer = GetComponentInChildren <SpriteRenderer> ();
 			if (spriteRenderer.sprite != null)
 				Destroy (spriteRenderer.sprite);
 			spriteRenderer.sprite = s;
@@ -60,7 +62,7 @@ public class GameField : MonoBehaviour {
 			&& (transform.position.y + hUnitsField / 2 >= gp.transform.position.y + gp.hUnitsPicture / 2);
 	}
 
-	public GamePicture createPicture (string url, Vector3 position, float size, float angle, bool flipX = false, bool flipY = false) {
+	public GamePicture createPicture (string url, Vector3 position, float size, float angle, bool flipX = false, bool flipY = false, bool shadow = true) {
 		GamePicture gp = Instantiate (gamePicturePrefab, position, transform.rotation, transform) as GamePicture;
 		gamePictures.Add (gp);
 		gp.setPicture (url);
@@ -68,7 +70,12 @@ public class GameField : MonoBehaviour {
 		gp.setRotation (angle);
 		gp.setFlipX (flipX);
 		gp.setFlipY (flipY);
-		gp.setSpriteColor (pictureShadowColor);
+		if (shadow)
+			gp.setSpriteColor (pictureShadowColor);
 		return gp;
+	}
+
+	public float getScale () {
+		return transform.localScale.x;
 	}
 }

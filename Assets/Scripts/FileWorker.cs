@@ -23,8 +23,8 @@ public class FileWorker {
 				file.WriteLine (pictures [i].url);
 				file.WriteLine (pictures [i].getSize());
 				file.WriteLine (pictures [i].getRotationAngle());
-				file.WriteLine (pictures [i].transform.position.x);
-				file.WriteLine (pictures [i].transform.position.y);
+				file.WriteLine (pictures [i].transform.position.x - field.transform.position.x);
+				file.WriteLine (pictures [i].transform.position.y - field.transform.position.y);
 				file.WriteLine ((pictures [i].getFlipX() ? 1 : 0));
 				file.WriteLine ((pictures [i].getFlipY() ? 1 : 0));
 				res = true;
@@ -43,8 +43,8 @@ public class FileWorker {
 			pictures[i].initiatePicture(file.ReadLine ());
 			pictures [i].setSize (System.Convert.ToSingle(file.ReadLine ()));
 			pictures [i].setRotation (System.Convert.ToSingle(file.ReadLine ())); 
-			float x = System.Convert.ToSingle(file.ReadLine ());
-			float y = System.Convert.ToSingle(file.ReadLine ());
+			float x = System.Convert.ToSingle(file.ReadLine ()) + field.transform.position.x;
+			float y = System.Convert.ToSingle(file.ReadLine ()) + field.transform.position.y;
 			pictures [i].transform.position = new Vector3 (x, y, pictures [i].transform.position.z);
 			bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
 			bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
@@ -66,8 +66,8 @@ public class FileWorker {
 			float angle = System.Convert.ToSingle (file.ReadLine ());
 			pictures [i].setSize (size);
 			pictures [i].setRotation (angle); 
-			float x = System.Convert.ToSingle(file.ReadLine ());
-			float y = System.Convert.ToSingle(file.ReadLine ());
+			float x = System.Convert.ToSingle(file.ReadLine ()) + field.transform.position.x;
+			float y = System.Convert.ToSingle(file.ReadLine ()) + field.transform.position.y;
 			//pictures [i].setTargetPosition (new Vector3 (x, y, pictures [i].transform.position.z));
 			bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
 			bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
@@ -76,6 +76,27 @@ public class FileWorker {
 			pictures [i].setTarget(field.createPicture (url, new Vector3 (x, y, -1), size, angle, flipX, flipY));
 		}
 		file.Close ();
+	}
+
+	static public void readLevelFromFileForNote (string path, ref TaskNote tn) {
+		StreamReader file = new StreamReader (path);
+		tn.setTitle(file.ReadLine ());
+		tn.setDescription (file.ReadLine ());
+		tn.icon.setBackgroundImg(file.ReadLine ());
+
+		int i = 0;
+		while (file.Peek() != -1) {
+			string url = file.ReadLine ();
+			float size = System.Convert.ToSingle (file.ReadLine ());
+			float angle = System.Convert.ToSingle (file.ReadLine ());
+			float x = System.Convert.ToSingle(file.ReadLine ()) * tn.icon.getScale();
+			float y = System.Convert.ToSingle(file.ReadLine ()) * tn.icon.getScale();
+			bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+			bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+			tn.icon.createPicture (url, new Vector3 (x + tn.icon.transform.position.x, y + tn.icon.transform.position.y, -4), size, angle, flipX, flipY,false);
+			i++;
+		}
+		tn.setObjectsCount (i);
 	}
 
 }
