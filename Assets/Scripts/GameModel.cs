@@ -18,7 +18,7 @@ public class GameModel : MonoBehaviour {
 
 	//private Dictionary <GamePicture, Vector3> gamePicturePlaces = new Dictionary<GamePicture, Vector3>();
 	private bool gameIsActive = true;
-	private string gameUrl = "E:\\Google Drive\\Диплом\\CorrelatinGame\\Components\\Levels\\test.cglvl";
+	private string gameUrl = "Components\\Levels\\test.cglvl";
 	void Awake () {
 
 		string name = "", description = "";
