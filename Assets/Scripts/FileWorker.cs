@@ -39,17 +39,21 @@ public class FileWorker {
 		name = file.ReadLine ();
 		description = file.ReadLine ();
 		field.setBackgroundImg(file.ReadLine ());
-		for (int i = 0; i < pictures.Length && file.Peek() != -1; i++) {
-			pictures[i].initiatePicture(file.ReadLine ());
-			pictures [i].setSize (System.Convert.ToSingle(file.ReadLine ()));
-			pictures [i].setRotation (System.Convert.ToSingle(file.ReadLine ())); 
-			float x = System.Convert.ToSingle(file.ReadLine ());
-			float y = System.Convert.ToSingle(file.ReadLine ());
-			pictures [i].transform.position = new Vector3 (x, y, pictures [i].transform.position.z);
-			bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
-			bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
-			pictures [i].setFlipX (flipX);
-			pictures [i].setFlipY (flipY);
+		for (int i = 0; i < pictures.Length; i++) {
+			if (file.Peek () != -1) {
+				pictures [i].initiatePicture (file.ReadLine ());
+				pictures [i].setSize (System.Convert.ToSingle (file.ReadLine ()));
+				pictures [i].setRotation (System.Convert.ToSingle (file.ReadLine ())); 
+				float x = System.Convert.ToSingle (file.ReadLine ());
+				float y = System.Convert.ToSingle (file.ReadLine ());
+				pictures [i].transform.position = new Vector3 (x, y, pictures [i].transform.position.z);
+				bool flipX = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+				bool flipY = System.Convert.ToBoolean (System.Convert.ToSingle (file.ReadLine ()));
+				pictures [i].setFlipX (flipX);
+				pictures [i].setFlipY (flipY);
+			} else { 
+				pictures [i].reset ();
+			}
 		}
 		file.Close ();
 	}
