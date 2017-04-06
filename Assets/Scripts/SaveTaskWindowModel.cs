@@ -8,7 +8,7 @@ public class SaveTaskWindowModel : MonoBehaviour {
 	private TaskNote taskNote;
 
 	void Awake () {
-		FileWorker.readLevelFromFileForNote ("E:\\Google Drive\\Диплом\\CorrelatinGame\\Components\\Levels\\test.cglvl", ref taskNote);
+		FileWorker.readLevelFromFileForNote ("Components\\Levels\\test.cglvl", ref taskNote);
 	}
 
 }
