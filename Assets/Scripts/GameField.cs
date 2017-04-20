@@ -22,24 +22,28 @@ public class GameField : MonoBehaviour {
 	}
 	public void setBackgroundImg (string path) {
 		Texture2D newTex = FileWorker.readImage (path);
-
-		if (newTex != null){
+		if (newTex != null) {
 			url = path;
-			Sprite s;
-			//Побольшей стороне
-			if (false){
-				s = Sprite.Create(newTex, new Rect(0,0,newTex.width,newTex.height), new Vector2(0.5f, 0.5f), 
-					(newTex.width / wUnitsField > newTex.height / hUnitsField ? newTex.width / wUnitsField : newTex.height / hUnitsField)); //Расчет количества пикселей в юните по большему отношению сторон к соответствующему количеству юнитов
-			}
-			//Заполнение
-			s = Sprite.Create(newTex, zapolnenie (newTex.width,newTex.height, wUnitsField, hUnitsField), new Vector2(0.5f, 0.5f),
-				(newTex.width / wUnitsField < newTex.height / hUnitsField ? newTex.width / wUnitsField : newTex.height / hUnitsField));
-			if (spriteRenderer == null)
-				spriteRenderer = GetComponentInChildren <SpriteRenderer> ();
-			if (spriteRenderer.sprite != null)
-				Destroy (spriteRenderer.sprite);
-			spriteRenderer.sprite = s;
+			setBackgroundImg (newTex);
 		}
+
+	}
+
+	public void setBackgroundImg (Texture2D tex) {
+		Sprite s;
+		//Побольшей стороне
+		if (false){
+			s = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f, 0.5f), 
+				(tex.width / wUnitsField > tex.height / hUnitsField ? tex.width / wUnitsField : tex.height / hUnitsField)); //Расчет количества пикселей в юните по большему отношению сторон к соответствующему количеству юнитов
+		}
+		//Заполнение
+		s = Sprite.Create(tex, zapolnenie (tex.width,tex.height, wUnitsField, hUnitsField), new Vector2(0.5f, 0.5f),
+			(tex.width / wUnitsField < tex.height / hUnitsField ? tex.width / wUnitsField : tex.height / hUnitsField));
+		if (spriteRenderer == null)
+			spriteRenderer = GetComponentInChildren <SpriteRenderer> ();
+		if (spriteRenderer.sprite != null)
+			Destroy (spriteRenderer.sprite);
+		spriteRenderer.sprite = s;
 	}
 
 	private Rect zapolnenie(int w, int h, float wu, float hu){
@@ -75,7 +79,37 @@ public class GameField : MonoBehaviour {
 		return gp;
 	}
 
+	public GamePicture createPicture (GamePictureInfo gpi, bool shadow = true) {
+		GamePicture gp = Instantiate (gamePicturePrefab, new Vector3 (gpi.Position.x, gpi.Position.y, -1f), transform.rotation, transform) as GamePicture;
+		gamePictures.Add (gp);
+		gp.setPicture (gpi.Img);
+		gp.setSize (gpi.Size);
+		gp.setRotation (gpi.Angle);
+		gp.setFlipX (gpi.FlipX);
+		gp.setFlipY (gpi.FlipY);
+		gp.gamePictureInfo = gpi;
+		if (shadow)
+			gp.setSpriteColor (pictureShadowColor);
+		return gp;
+	}
+
 	public float getScale () {
 		return transform.localScale.x;
+	}
+
+	public void setTask (Task task) {
+		setBackgroundImg (task.BackgroundImg);
+		GamePictureInfo[] gps = task.getGamePictures ();
+		for (int i = 0; i < gps.Length && gps [i] != null; i++) {
+			createPicture (gps [i]);
+		}
+	}
+
+	public void setTrueColorTo (GamePictureInfo gpi) {
+		foreach (GamePicture gp in gamePictures) {
+			if (gp.gamePictureInfo == gpi) {
+				gp.setTrueColor();
+			}
+		}
 	}
 }

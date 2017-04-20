@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 
 public class ButtonController : MonoBehaviour {
 
@@ -82,7 +82,7 @@ public class ButtonController : MonoBehaviour {
 		Debug.Log ("Exit!!!");
 	}
 
-	private void openBackgroundPictureAction () {
+	private void openBackgroundPictureAction () {/*
 		string title = "Открыть фоновое изображение";
 		string directory = "Components/Backgrounds";
 		string extention = "png,jpg";
@@ -93,13 +93,13 @@ public class ButtonController : MonoBehaviour {
 				Debug.Log ("Background img choised: " + path);
 				backgroundImgChoised (path);
 			}
-		}
+		}*/
 			
 	}
 	public delegate void BackgroundImgChoised (string path);
 	public BackgroundImgChoised backgroundImgChoised;
 
-	private void addPictureToPanelAction () {
+	private void addPictureToPanelAction () {/*
 		string title = "Добавть объект";
 		string directory = "Components/Objects";
 		string extention = "png,jpg";
@@ -110,12 +110,12 @@ public class ButtonController : MonoBehaviour {
 				Debug.Log ("Picture choised: " + path);
 				pictureToPanelChoised (path);
 			}
-		}
+		}*/
 	}
 	public delegate void PictureToPanelChoised (string path);
 	public PictureToPanelChoised pictureToPanelChoised;
 
-	private void saveLevelAction () {
+	private void saveLevelAction () {/*
 		string title = "Сохранить уровень";
 		string directory = "Components/Levels";
 		string defaultName = "Новый уровень";
@@ -127,12 +127,12 @@ public class ButtonController : MonoBehaviour {
 				Debug.Log ("File foe save level choised: " + path);
 				saveLevel (path);
 			}
-		}
+		}*/
 	}
 	public delegate void SaveLevelEvent (string path);
 	public SaveLevelEvent saveLevel;
 
-	private void openLevelAction () {
+	private void openLevelAction () {/*
 		string title = "Открыть уровень";
 		string directory = "Components/Levels";
 		string extention = "cglvl";
@@ -143,7 +143,7 @@ public class ButtonController : MonoBehaviour {
 				Debug.Log ("File foe save level choised: " + path);
 				openLevel (path);
 			}
-		}
+		}*/
 	}
 	public delegate void OpenLevelEvent (string path);
 	public OpenLevelEvent openLevel;

@@ -11,7 +11,7 @@ public class GameModel : MonoBehaviour {
 	[SerializeField]
 	private AudioController audioController;
 	[SerializeField]
-	private GamePicture [] pictures;
+	private PicturesBar picturesBar;
 	[SerializeField]
 	private Transform menu;
 
@@ -22,11 +22,11 @@ public class GameModel : MonoBehaviour {
 	void Awake () {
 
 		string name = "", description = "";
-		FileWorker.readLevelFromFileForGame (gameUrl, ref gameField, ref pictures, ref name, ref description); 
-
-		for (int i = 0; i < pictures.Length; i++) {
-			pictures [i].draggingEnd += pictureDroped;
-		}
+		//FileWorker.readLevelFromFileForGame (gameUrl, ref gameField, ref pictures, ref name, ref description); 
+		Task t = DBWorker.readTask (1);
+		gameField.setTask (t);
+		picturesBar.setTask (t);
+		picturesBar.pictureDroped += pictureDroped;
 		//MonoBehaviour[] b = gameField.GetComponents<MonoBehaviour> ();
 		/*gamePicturePlaces.Add (fish, new Vector3 (-3.07F, 1.8F, 0F));
 		gamePicturePlaces.Add (fish2, new Vector3 (-3.07F, 1.8F, 0F));
@@ -47,6 +47,7 @@ public class GameModel : MonoBehaviour {
 				audioController.playBubblesSound();
 				//gamePicturePlaces.Remove(gp);
 				//Destroy (gp.gameObject);
+				gameField.setTrueColorTo(gp.gamePictureInfo);
 				gp.reset ();
 				checkForGameOver ();
 				return;
@@ -56,12 +57,7 @@ public class GameModel : MonoBehaviour {
 	}
 
 	private void checkForGameOver() {
-		bool empty = true;
-		for (int i = 0; i < pictures.Length; i++) {
-			if (pictures[i].isActive())
-				empty = false;
-		}
-		if (empty) {
+		if (!picturesBar.hasActivePictures()) {
 			viewController.showCangratulations ();
 			audioController.playVictorySound ();
 			gameIsActive = false;

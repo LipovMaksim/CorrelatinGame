@@ -12,6 +12,7 @@ public class GamePicture : DraggableObject {
 	public Vector3 positionInToolBar;
 	private SpriteRenderer spriteRenderer;
 
+	public GamePictureInfo gamePictureInfo = null;
 	private GamePicture target;
 	private Vector2 targetPosition;
 	public float wUnitsPicture = 2f;
@@ -35,10 +36,9 @@ public class GamePicture : DraggableObject {
 	public bool onTargetPosition (float esp = 1) {
 		if (targetPosition == null)
 			return false;
-		float a = Mathf.Abs (target.transform.position.x - transform.position.x);
-		float b = Mathf.Abs (target.transform.position.y - transform.position.y);
+		float a = Mathf.Abs (targetPosition.x - transform.position.x);
+		float b = Mathf.Abs (targetPosition.y - transform.position.y);
 		if (Mathf.Sqrt (a * a + b * b) < esp) {
-			target.setSpriteColor (trueColor);
 			return true;
 		} else {
 			return false;
@@ -54,14 +54,18 @@ public class GamePicture : DraggableObject {
 		Texture2D newTex = FileWorker.readImage (path);
 		if (newTex != null) {
 			url = path;
-			Sprite s;
-			//Побольшей стороне
-			s = Sprite.Create (newTex, new Rect (0, 0, newTex.width, newTex.height), new Vector2 (0.5f, 0.5f), 
-				(newTex.width / wUnitsPicture > newTex.height / hUnitsPicture ? newTex.width / wUnitsPicture : newTex.height / hUnitsPicture)); //Расчет количества пикселей в юните по большему отношению сторон к соответствующему количеству юнитов
-			setSprite(s);
+			setPicture (newTex);
 			return true;
 		}
 		return false;
+	}
+
+	public void setPicture (Texture2D tex) {
+		Sprite s;
+		//По большей стороне
+		s = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0.5f, 0.5f), 
+			(tex.width / wUnitsPicture > tex.height / hUnitsPicture ? tex.width / wUnitsPicture : tex.height / hUnitsPicture)); //Расчет количества пикселей в юните по большему отношению сторон к соответствующему количеству юнитов
+		setSprite(s);
 	}
 
 	public void reset(){
@@ -150,5 +154,20 @@ public class GamePicture : DraggableObject {
 
 	public void setSpriteColor (Color c) {
 		spriteRenderer.color = c;
+	}
+
+	public void setFrom (GamePictureInfo gpi) {
+		setPicture (gpi.Img);
+		setRotation (gpi.Angle);
+		setSize (gpi.Size);
+		setTargetPosition (gpi.Position);
+		setFlipX (gpi.FlipX);
+		setFlipY (gpi.FlipY);
+		gamePictureInfo = gpi;
+		activate ();
+	}
+
+	public void setTrueColor () {
+		setSpriteColor (trueColor);
 	}
 }
