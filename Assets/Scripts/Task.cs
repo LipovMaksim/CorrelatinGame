@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Task {
 
-	private int DBId;
+	private int dbId;
+	public int DBId { get { return dbId;} set { dbId = value;}}
 	private string name;
 	public string Name { get { return name;} set { name = value;}}
 	private string description;
@@ -12,13 +13,15 @@ public class Task {
 	const int PICTURES_SIZE = 7;
 	private Texture2D backgroundImg;
 	public Texture2D BackgroundImg { get { return backgroundImg;} set { backgroundImg = value;}}
+	private int backgroundId;
+	public int BackgroundId { get { return backgroundId; } set { backgroundId = value; } }
 	private GamePictureInfo[] gamePictures = new GamePictureInfo[PICTURES_SIZE];
 
 	public Task (string n, string d = "", Texture2D bi = null, int id = -1) {
 		name = n;
 		description = d;
 		backgroundImg = bi;
-		DBId = id;
+		dbId = id;
 	}
 
 	public bool addGamePicture (GamePictureInfo gpi) {

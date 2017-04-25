@@ -23,7 +23,7 @@ public class GameModel : MonoBehaviour {
 
 		string name = "", description = "";
 		//FileWorker.readLevelFromFileForGame (gameUrl, ref gameField, ref pictures, ref name, ref description); 
-		Task t = DBWorker.readTask (1);
+		Task t = DBWorker.loadTask (1);
 		gameField.setTask (t);
 		picturesBar.setTask (t);
 		picturesBar.pictureDroped += pictureDroped;
