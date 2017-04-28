@@ -10,7 +10,7 @@ public class Task {
 	public string Name { get { return name;} set { name = value;}}
 	private string description;
 	public string Description { get { return description;} set { description = value;}}
-	const int PICTURES_SIZE = 7;
+	public const int PICTURES_SIZE = 7;
 	private Texture2D backgroundImg;
 	public Texture2D BackgroundImg { get { return backgroundImg;} set { backgroundImg = value;}}
 	private int backgroundId;
@@ -36,6 +36,10 @@ public class Task {
 
 	public GamePictureInfo[] getGamePictures () {
 		return gamePictures;
+	}
+
+	public void setGamePictures (GamePictureInfo[] gpis) {
+		gamePictures = gpis;
 	}
 
 	public bool resetGamePicture (int i) {
