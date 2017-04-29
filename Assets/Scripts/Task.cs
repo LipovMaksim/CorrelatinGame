@@ -58,33 +58,3 @@ public class Task {
 
 }
 
-public class Pair <T, U> {
-	private T firstVal;
-	private U secondVal;
-
-	public Pair (){
-		firstVal = default(T);
-		secondVal = default(U);
-	}
-
-	public Pair (T f, U s){
-		firstVal = f;
-		secondVal = s;
-	}
-
-	public void setFirst(T f) {
-		firstVal = f;
-	}
-
-	public void setSecond(U s) {
-		secondVal = s;
-	}
-
-	public T first() {
-		return firstVal;
-	}
-
-	public U second() {
-		return secondVal;
-	}
-}

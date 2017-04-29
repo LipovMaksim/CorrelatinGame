@@ -18,6 +18,9 @@ public class GamePicture : DraggableObject {
 	public float wUnitsPicture = 2f;
 	public float hUnitsPicture = 2f;
 
+	private int id;
+	public int Id { get { return id; } set { id = value; } }
+
 	public string url = "";
 
 	void Awake(){
@@ -58,6 +61,12 @@ public class GamePicture : DraggableObject {
 			return true;
 		}
 		return false;
+	}
+
+	public void setPicture (ImageData imgData) {
+		id = imgData.Id;
+		setPicture (imgData.Texture);
+		activate ();
 	}
 
 	public void setPicture (Texture2D tex) {

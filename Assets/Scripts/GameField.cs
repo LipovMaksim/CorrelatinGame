@@ -16,6 +16,7 @@ public class GameField : MonoBehaviour {
 
 	private List <GamePicture> gamePictures = new List <GamePicture> ();
 	private SpriteRenderer spriteRenderer;
+	private int backgroundId = -1;
 
 	void Awake (){
 		spriteRenderer = GetComponentInChildren <SpriteRenderer> ();
@@ -27,6 +28,11 @@ public class GameField : MonoBehaviour {
 			setBackgroundImg (newTex);
 		}
 
+	}
+
+	public void setBackgroundImg (ImageData imgData) {
+		setBackgroundImg (imgData.Texture);
+		backgroundId = imgData.Id;
 	}
 
 	public void setBackgroundImg (Texture2D tex) {

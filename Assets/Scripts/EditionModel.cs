@@ -16,7 +16,18 @@ public class EditionModel : MonoBehaviour {
 	private Slider sizeSlider;
 	[SerializeField]
 	private Slider rotationSlider;
-
+	[SerializeField]
+	private GameObject imagesCanvas;
+	[SerializeField]
+	private GameObject backgroundsCanvas;
+	[SerializeField]
+	private ImageData pictureImageDataPrefab;
+	[SerializeField]
+	private ImageData backgroundImageDataPrefab;
+	[SerializeField]
+	private Transform imagesLayout;
+	[SerializeField]
+	private Transform backgroundsLayout;
 
 	private GamePicture currentPcture = null;
 	private Vector3 [] pictureToolBarPositions; 
@@ -37,6 +48,20 @@ public class EditionModel : MonoBehaviour {
 			pictures[i].draggingStart += outFromPanel;
 			pictures[i].draggingEnd += pictureDroped;
 			pictureToolBarPositions [i] = pictures [i].transform.position;
+		}
+
+		Pair<int, Texture2D>[] texs = DBWorker.loadAllPictures ();
+		for (int i = 0; i < texs.Length; i++) {
+			ImageData id = (ImageData)Instantiate (pictureImageDataPrefab, imagesLayout);
+			id.transform.localScale = new Vector3 (1, 1, 1);
+			id.setImage (texs [i].second, texs[i].first);
+		}
+
+		texs = DBWorker.loadAllBackgrounds ();
+		for (int i = 0; i < texs.Length; i++) {
+			ImageData id = (ImageData)Instantiate (backgroundImageDataPrefab, backgroundsLayout);
+			id.transform.localScale = new Vector3 (1, 1, 1);
+			id.setImage (texs [i].second, texs[i].first);
 		}
 	}
 
@@ -100,6 +125,29 @@ public class EditionModel : MonoBehaviour {
 		if (i < pictures.Length) {
 			pictures [i].initiatePicture (path);
 		}	
+	}
+
+	public void openNewPicture(ImageData imgData){
+
+		int i = 0;
+		for (; i < pictures.Length && pictures[i].GetComponent<SpriteRenderer>().sprite != null; i++);
+		if (i < pictures.Length) {
+			pictures [i].setPicture (imgData);
+		}	
+		imagesCanvas.SetActive (false);
+	}
+
+	public void setBackgroundImage (ImageData imgData) {
+		field.setBackgroundImg (imgData);
+		backgroundsCanvas.SetActive (false);
+	}
+
+	public void showAddPicture () {
+		imagesCanvas.SetActive (true);
+	}
+
+	public void showSetBackground () {
+		backgroundsCanvas.SetActive (true);
 	}
 
 	private void saveLevel (string path){
