@@ -155,6 +155,11 @@ public class EditionModel : MonoBehaviour {
 		FileWorker.writeLevelInFile (path, field, pictures, "Level name", "Level description");
 	}
 
+	public void saveTask () {
+		Task task = new Task ("Задание 3", "", null, field.BackgroundId);
+		DBWorker.saveTask (task);
+	}
+
 	private void openLevel (string path){
 		string name = "";
 		string description = "";

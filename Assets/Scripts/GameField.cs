@@ -17,6 +17,7 @@ public class GameField : MonoBehaviour {
 	private List <GamePicture> gamePictures = new List <GamePicture> ();
 	private SpriteRenderer spriteRenderer;
 	private int backgroundId = -1;
+	public int BackgroundId { get{return backgroundId;} set{backgroundId = value;}}
 
 	void Awake (){
 		spriteRenderer = GetComponentInChildren <SpriteRenderer> ();
