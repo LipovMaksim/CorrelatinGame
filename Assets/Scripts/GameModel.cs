@@ -23,7 +23,7 @@ public class GameModel : MonoBehaviour {
 
 		string name = "", description = "";
 		//FileWorker.readLevelFromFileForGame (gameUrl, ref gameField, ref pictures, ref name, ref description); 
-		Task t = DBWorker.loadTask (1);
+		Task t = DataTransfer.Task;
 		gameField.setTask (t);
 		picturesBar.setTask (t);
 		picturesBar.pictureDroped += pictureDroped;
@@ -42,12 +42,13 @@ public class GameModel : MonoBehaviour {
 		const float R = 0.01F; // Радиус зоны попадания на картинку
 		GamePicture gp = (GamePicture)obj;
 		if (gp != null) {
-			if (gp.onTargetPosition ()) {
+			GamePicture target = gameField.onTargetPositon (gp);
+			if (target != null) {
 				//картинка сопоставлена правильно (музыка, эфекты)
 				audioController.playBubblesSound();
 				//gamePicturePlaces.Remove(gp);
 				//Destroy (gp.gameObject);
-				gameField.setTrueColorTo(gp.gamePictureInfo);
+				target.setTrueColor ();
 				gp.reset ();
 				checkForGameOver ();
 				return;

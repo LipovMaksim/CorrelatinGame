@@ -30,22 +30,39 @@ public class OpenTaskWindowModel : MonoBehaviour {
 	}
 
 	public void openTaskEditor (bool createNewTask) {
-		if (currentTask != null) {
-			DataTransfer.Task = (createNewTask ? null : currentTask.getTask ());
+		if (createNewTask) {
+			DataTransfer.Task = null;
 			Application.LoadLevel (2);
+		} else {
+			if (currentTask != null) {
+				DataTransfer.Task = (createNewTask ? null : currentTask.getTask ());
+				Application.LoadLevel (2);
+			}
 		}
 	}
+
+	public void openGame () {
+		if (currentTask != null) {
+			DataTransfer.Task = currentTask.getTask ();
+			Application.LoadLevel (1);
+		}
+
+	}
 		
-	public void removeTask () {
+	public void removeCurrentTask () {
+		DBWorker.removeTask (currentTask.getTask ());
+		Destroy (currentTask.gameObject);
+		taskChoised (null);
 
 	}
 
 	public void taskChoised (TaskNote taskNote) {
-		currentTaskView.setTask (taskNote.getTask());
+		currentTaskView.setTask ( ( taskNote == null ? null : taskNote.getTask() ) );
 		if (currentTask != null) {
 			currentTask.setCurrent (false);
 		}
 		currentTask = taskNote;
-		currentTask.setCurrent ();
+		if (currentTask != null)
+			currentTask.setCurrent ();
 	}
 }

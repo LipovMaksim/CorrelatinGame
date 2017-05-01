@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EditionModel : MonoBehaviour {
 
@@ -9,7 +10,8 @@ public class EditionModel : MonoBehaviour {
 	[SerializeField]
 	private GameField field;
 	[SerializeField]
-	private GamePicture [] pictures;
+	PicturesBar picturesBar;
+	//private GamePicture [] pictures;
 	[SerializeField]
 	private Transform basket;
 	[SerializeField]
@@ -28,45 +30,43 @@ public class EditionModel : MonoBehaviour {
 	private Transform imagesLayout;
 	[SerializeField]
 	private Transform backgroundsLayout;
+	[SerializeField]
+	private GameObject saveMenu;
 
 	private GamePicture currentPcture = null;
-	private Vector3 [] pictureToolBarPositions; 
+	private string taskTitle = "";
+	private string taskDescription = "";
 
-	void Awake() {
+	void Start() {
 
-		btnController.backgroundImgChoised += openBackgroundImg;
-		btnController.pictureToPanelChoised += openNewPicture;
-		btnController.saveLevel += saveLevel;
-		btnController.openLevel += openLevel;
 		btnController.mirrorVertButtnPresed += mirrorVertCurrentPicture;
 		btnController.mirrorHorButtnPresed += mirrorHorCurrentPicture;
 		sizeSlider.valueChanged += sizeSliderValueChanged;
 		rotationSlider.valueChanged += rotationSliderValueChanged;
+		picturesBar.pictureDroped += pictureDroped;
 
-		pictureToolBarPositions = new Vector3[pictures.Length];
-		for (int i = 0; i < pictures.Length; i++) {
-			pictures[i].draggingStart += outFromPanel;
-			pictures[i].draggingEnd += pictureDroped;
-			pictureToolBarPositions [i] = pictures [i].transform.position;
-		}
 
 		Pair<int, Texture2D>[] texs = DBWorker.loadAllPictures ();
 		for (int i = 0; i < texs.Length; i++) {
-			ImageData id = (ImageData)Instantiate (pictureImageDataPrefab, imagesLayout);
-			id.transform.localScale = new Vector3 (1, 1, 1);
-			id.setImage (texs [i].second, texs[i].first);
+			ImageData imageData = (ImageData)Instantiate (pictureImageDataPrefab, imagesLayout);
+			imageData.transform.localScale = new Vector3 (1, 1, 1);
+			imageData.setImage (texs [i].second, texs[i].first);
 		}
 
 		texs = DBWorker.loadAllBackgrounds ();
 		for (int i = 0; i < texs.Length; i++) {
-			ImageData id = (ImageData)Instantiate (backgroundImageDataPrefab, backgroundsLayout);
-			id.transform.localScale = new Vector3 (1, 1, 1);
-			id.setImage (texs [i].second, texs[i].first);
+			ImageData imageData = (ImageData)Instantiate (backgroundImageDataPrefab, backgroundsLayout);
+			imageData.transform.localScale = new Vector3 (1, 1, 1);
+			imageData.setImage (texs [i].second, texs[i].first);
 		}
-	}
 
-	private void outFromPanel (DraggableObject obj){
-		
+		//DataTransfer.Task = DBWorker.loadTask (1);
+
+		if (DataTransfer.Task != null) {
+			field.setBackgroundImg (DataTransfer.Task.getBackgroundData ());
+			picturesBar.setTask (DataTransfer.Task);
+			picturesBar.pictureDroped += pictureDroped;
+		}
 	}
 
 	void pictureDroped (DraggableObject obj, Vector3 position){
@@ -109,6 +109,10 @@ public class EditionModel : MonoBehaviour {
 	private void toMainMenu(){
 		Application.LoadLevel (0);
 	}
+
+	public void toTaskList () {
+		Application.LoadLevel (3);
+	}
 		
 
 	private void openBackgroundImg(string path){
@@ -117,7 +121,7 @@ public class EditionModel : MonoBehaviour {
 	}
 
 
-
+	/*
 	private void openNewPicture(string path){
 
 		int i = 0;
@@ -125,15 +129,11 @@ public class EditionModel : MonoBehaviour {
 		if (i < pictures.Length) {
 			pictures [i].initiatePicture (path);
 		}	
-	}
+	}*/
 
 	public void openNewPicture(ImageData imgData){
 
-		int i = 0;
-		for (; i < pictures.Length && pictures[i].GetComponent<SpriteRenderer>().sprite != null; i++);
-		if (i < pictures.Length) {
-			pictures [i].setPicture (imgData);
-		}	
+		picturesBar.addPicture (imgData);
 		imagesCanvas.SetActive (false);
 	}
 
@@ -150,21 +150,26 @@ public class EditionModel : MonoBehaviour {
 		backgroundsCanvas.SetActive (true);
 	}
 
+	/*
 	private void saveLevel (string path){
 
 		FileWorker.writeLevelInFile (path, field, pictures, "Level name", "Level description");
-	}
+	}*/
 
-	public void saveTask () {
-		Task task = new Task ("Задание 3", "", null, field.BackgroundId);
+	public void saveTask (bool asNew) {
+		Task task = new Task (taskTitle, taskDescription, field.BackgroundId);
+		task.setGamePictures (picturesBar.getGamePictures ());
+		if (!asNew && DataTransfer.Task != null)
+			task.DBId = DataTransfer.Task.DBId;
 		DBWorker.saveTask (task);
 	}
 
+	/*
 	private void openLevel (string path){
 		string name = "";
 		string description = "";
 		FileWorker.readLevelFromFileForEdition (path, ref field, ref pictures, ref name, ref description);
-	}
+	}*/
 
 	public void setCurrentPicture (GamePicture gp) {
 		if (gp == null) {
@@ -201,4 +206,17 @@ public class EditionModel : MonoBehaviour {
 		if (currentPcture != null)
 			currentPcture.setRotation (val);
 	}
+
+	public void taskTitleChaged (UnityEngine.UI.Text text) {
+		taskTitle = text.text;
+	}
+
+	public void taskDecriptionChaged (UnityEngine.UI.Text text) {
+		taskDescription = text.text;
+	}
+
+	public void showSaveMenu (bool val) {
+		saveMenu.SetActive (val);
+	}
 }
+

@@ -73,6 +73,7 @@ public class GameField : MonoBehaviour {
 			&& (transform.position.y + hUnitsField / 2 >= gp.transform.position.y + gp.hUnitsPicture / 2);
 	}
 
+	/*
 	public GamePicture createPicture (string url, Vector3 position, float size, float angle, bool flipX = false, bool flipY = false, bool shadow = true) {
 		GamePicture gp = Instantiate (gamePicturePrefab, position, transform.rotation, transform) as GamePicture;
 		gamePictures.Add (gp);
@@ -84,17 +85,17 @@ public class GameField : MonoBehaviour {
 		if (shadow)
 			gp.setSpriteColor (pictureShadowColor);
 		return gp;
-	}
+	}*/
 
 	public GamePicture createPicture (GamePictureInfo gpi, bool shadow = true) {
 		GamePicture gp = Instantiate (gamePicturePrefab, new Vector3 (gpi.Position.x, gpi.Position.y, -1f), transform.rotation, transform) as GamePicture;
+		gp.transform.localPosition = new Vector3 (gpi.Position.x, gpi.Position.y, -1);
 		gamePictures.Add (gp);
-		gp.setPicture (gpi.Img);
+		gp.setPicture(gpi);
 		gp.setSize (gpi.Size);
 		gp.setRotation (gpi.Angle);
 		gp.setFlipX (gpi.FlipX);
 		gp.setFlipY (gpi.FlipY);
-		gp.gamePictureInfo = gpi;
 		if (shadow)
 			gp.setSpriteColor (pictureShadowColor);
 		return gp;
@@ -114,9 +115,22 @@ public class GameField : MonoBehaviour {
 
 	public void setTrueColorTo (GamePictureInfo gpi) {
 		foreach (GamePicture gp in gamePictures) {
-			if (gp.gamePictureInfo == gpi) {
+			if (gp.GamePictureInfo == gpi) {
 				gp.setTrueColor();
 			}
 		}
+	}
+
+	public GamePicture onTargetPositon (GamePicture gp, float esp = 1f) {
+		foreach (GamePicture gamePicture in gamePictures) {
+			float a = Mathf.Abs (gamePicture.transform.position.x - gp.transform.position.x);
+			float b = Mathf.Abs (gamePicture.transform.position.y - gp.transform.position.y);
+			if (Mathf.Sqrt (a * a + b * b) < esp) {
+				if (gp.GamePictureInfo.equals (gamePicture.GamePictureInfo)) {
+					return gamePicture;
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -34,6 +34,7 @@ public class FileWorker {
 		return res;
 	}
 
+	/*
 	static public void readLevelFromFileForEdition(string path, ref GameField field, ref GamePicture[] pictures, ref string name, ref string description){
 		StreamReader file = new StreamReader (path);
 		name = file.ReadLine ();
@@ -56,8 +57,8 @@ public class FileWorker {
 			}
 		}
 		file.Close ();
-	}
-
+	}*/
+	/*
 	static public void readLevelFromFileForGame(string path, ref GameField field, ref GamePicture[] pictures, ref string name, ref string description){
 		StreamReader file = new StreamReader (path);
 		name = file.ReadLine ();
@@ -80,6 +81,6 @@ public class FileWorker {
 			pictures [i].setTarget(field.createPicture (url, new Vector3 (x, y, -1), size, angle, flipX, flipY));
 		}
 		file.Close ();
-	}
+	}*/
 
 }

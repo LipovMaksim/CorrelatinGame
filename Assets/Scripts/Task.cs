@@ -17,10 +17,18 @@ public class Task {
 	public int BackgroundId { get { return backgroundId; } set { backgroundId = value; } }
 	private GamePictureInfo[] gamePictures = new GamePictureInfo[PICTURES_SIZE];
 
-	public Task (string n, string d = "", Texture2D bi = null, int id = -1) {
+	public Task (string n, string d = "", Texture2D bi = null, int id = -1, int bgId = -1) {
 		name = n;
 		description = d;
 		backgroundImg = bi;
+		dbId = id;
+		backgroundId = bgId;
+	}
+
+	public Task (string n, string d, int bgId, int id = -1) {
+		name = n;
+		description = d;
+		backgroundId = bgId;
 		dbId = id;
 	}
 
@@ -54,6 +62,10 @@ public class Task {
 		for (int i = 0; i < PICTURES_SIZE; i++) {
 			gamePictures [i] = null;
 		}
+	}
+
+	public ImageData getBackgroundData () {
+		return new ImageData (backgroundImg, backgroundId);
 	}
 
 }

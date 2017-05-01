@@ -5,28 +5,51 @@ using UnityEngine;
 public class GamePicture : DraggableObject {
 	[SerializeField]
 	private SpriteRenderer frame;
-
+	[SerializeField]
+	private bool edition = false;
 
 	private Color trueColor = new Color (255, 255, 255, 255);
 
-	public Vector3 positionInToolBar;
-	private SpriteRenderer spriteRenderer;
 
-	public GamePictureInfo gamePictureInfo = null;
+	private SpriteRenderer _spriteRenderer;
+	private SpriteRenderer spriteRenderer{
+		set { _spriteRenderer = value;} 
+		get { 
+			while (_spriteRenderer == null) {
+				_spriteRenderer = GetComponent <SpriteRenderer> ();
+			}
+			return _spriteRenderer;
+		}
+	}
+
+	private GamePictureInfo gamePictureInfo = null;
+	public GamePictureInfo GamePictureInfo{
+		get {
+			if (edition) {
+				gamePictureInfo.Angle = getRotationAngle ();
+				gamePictureInfo.Size = getSize ();
+				gamePictureInfo.Position = getPositionOnField ();
+				gamePictureInfo.FlipX = getFlipX ();
+				gamePictureInfo.FlipY = getFlipY ();
+			}
+			return gamePictureInfo;
+		}
+	}
 	private GamePicture target;
 	private Vector2 targetPosition;
 	public float wUnitsPicture = 2f;
 	public float hUnitsPicture = 2f;
 
-	private int id;
+	private int id = -1;
 	public int Id { get { return id; } set { id = value; } }
 
 	public string url = "";
 
+	private Vector3 fieldPosition = new Vector3 (0, 0, 0);
+	public Vector3 FieldPosition { get { return fieldPosition;} set { fieldPosition = value;}}
+
 	void Awake(){
-		spriteRenderer = GetComponent <SpriteRenderer> ();
-		//frame = GetComponentInChildren <SpriteRenderer> ();
-		positionInToolBar = transform.position;
+		
 	}
 
 	public void setTargetPosition (Vector2 tp) {
@@ -48,11 +71,13 @@ public class GamePicture : DraggableObject {
 		}
 	}
 
+	/*
 	public void initiatePicture(string path){
 		if (setPicture (path))
 			activate ();
-	}
+	}*/
 
+	/*
 	public bool setPicture (string path) {
 		Texture2D newTex = FileWorker.readImage (path);
 		if (newTex != null) {
@@ -61,11 +86,18 @@ public class GamePicture : DraggableObject {
 			return true;
 		}
 		return false;
-	}
+	}*/
 
 	public void setPicture (ImageData imgData) {
-		id = imgData.Id;
+		gamePictureInfo = new GamePictureInfo (-1, imgData.Id, imgData.Texture, new Vector2 ());
 		setPicture (imgData.Texture);
+		activate ();
+	}
+
+	public void setPicture (GamePictureInfo gpi) {
+		gamePictureInfo = gpi;
+		id = gpi.Id;
+		setPicture (gpi.Img);
 		activate ();
 	}
 
@@ -78,7 +110,7 @@ public class GamePicture : DraggableObject {
 	}
 
 	public void reset(){
-		transform.position = positionInToolBar;
+		//transform.position = positionInToolBar;
 		removeSprite ();
 		setSize (1f);
 		spriteRenderer.flipX = false;
@@ -98,7 +130,7 @@ public class GamePicture : DraggableObject {
 
 	public void activate () {
 		GetComponent<CircleCollider2D> ().enabled = true;
-		transform.position = positionInToolBar;
+		//transform.position = positionInToolBar;
 	}
 
 	public void removeSprite(){
@@ -178,5 +210,13 @@ public class GamePicture : DraggableObject {
 
 	public void setTrueColor () {
 		setSpriteColor (trueColor);
+	}
+
+	public void setPositionOnField (Vector2 pos) {
+		transform.position = new Vector3 (fieldPosition.x + pos.x, fieldPosition.y + pos.y, fieldPosition.z - 1);
+	}
+
+	public Vector2 getPositionOnField () {
+		return new Vector2 (transform.position.x - fieldPosition.x, transform.position.y - fieldPosition.y);
 	}
 }

@@ -38,19 +38,27 @@ public class TaskNote : MonoBehaviour {
 
 	public void setTask (Task t) {
 		task = t;
-		icon.overrideSprite = Sprite.Create(t.BackgroundImg, new Rect(0,0,t.BackgroundImg.width, t.BackgroundImg.height), new Vector2(0.5f, 0.5f), 
-			(t.BackgroundImg.width / iconW > t.BackgroundImg.height / iconH ? t.BackgroundImg.width / iconW : t.BackgroundImg.height / iconH));
-		icon.enabled = true;
-		if (title != null)
-			title.text = t.Name;
-		if (description != null)
-			description.text = t.Description;
-		GamePictureInfo [] ps = task.getGamePictures ();
-		for (int i = 0; i < pictures.Length; i++) {
-			if (ps [i] != null)
-				setPicture (ps [i], i);
-			else
+		if (t == null) {
+			icon.overrideSprite = null;
+			icon.enabled = false;
+			for (int i = 0; i < pictures.Length; i++) {
 				pictures [i].enabled = false;
+			}
+		} else {
+			icon.overrideSprite = Sprite.Create (t.BackgroundImg, new Rect (0, 0, t.BackgroundImg.width, t.BackgroundImg.height), new Vector2 (0.5f, 0.5f), 
+				(t.BackgroundImg.width / iconW > t.BackgroundImg.height / iconH ? t.BackgroundImg.width / iconW : t.BackgroundImg.height / iconH));
+			icon.enabled = true;
+			if (title != null)
+				title.text = t.Name;
+			if (description != null)
+				description.text = t.Description;
+			GamePictureInfo[] ps = task.getGamePictures ();
+			for (int i = 0; i < pictures.Length; i++) {
+				if (ps [i] != null)
+					setPicture (ps [i], i);
+				else
+					pictures [i].enabled = false;
+			}
 		}
 	}
 
