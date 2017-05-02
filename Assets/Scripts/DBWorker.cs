@@ -54,15 +54,16 @@ public class DBWorker {
 	}
 
 
-	public static void saveTask (Task task) {
+	public static int saveTask (Task task) {
+		int id = -1;
 		using (IDbConnection dbcon = (IDbConnection) new SqliteConnection(DBUrl)) {
 			dbcon.Open ();
 			using (IDbCommand dbcmd = dbcon.CreateCommand()) {
-				if (task.DBId < 0) {
+				{
 					dbcmd.CommandText = INSERT_TASK.Replace("{background_id}", "" + task.BackgroundId).Replace("{title}", task.Name).Replace("{description}", task.Description);
 					dbcmd.ExecuteNonQuery();
 
-					int id = getLastId (dbcmd, "Tasks");
+					id = getLastId (dbcmd, "Tasks");
 
 					GamePictureInfo[] gpis = task.getGamePictures ();
 					for (int i = 0; i < gpis.Length; i++) {
@@ -76,12 +77,29 @@ public class DBWorker {
 			}
 			dbcon.Close ();
 		}
+		return id;
 	}
 
 	private static void addPictureToTask (IDbCommand dbcmd, int taskId, GamePictureInfo gpi) {
 		dbcmd.CommandText = INSERT_GAME_PICTURE.Replace("{picture_id}", "" + gpi.PictureId).Replace("{size}", "" + gpi.Size).Replace("{angle}", "" + gpi.Angle)
 			.Replace("{x}", "" + gpi.Position.x).Replace("{y}", "" + gpi.Position.y).Replace("{flip_x}", "" + gpi.FlipX_int).Replace("{flip_y}", "" + gpi.FlipY_int).Replace("{task_id}", "" + taskId);
 		dbcmd.ExecuteNonQuery();
+	}
+
+	public static Task loadLastAddedTask () {
+		int id = -1;
+		using (IDbConnection dbcon = (IDbConnection)new SqliteConnection (DBUrl)) {
+			dbcon.Open ();
+			using (IDbCommand dbcmd = dbcon.CreateCommand ()) {
+				dbcmd.CommandText = SELECT_LAST_ID.Replace ("{table_name}", "Tasks");
+
+				using (IDataReader reader = dbcmd.ExecuteReader ()) {
+					id = int.Parse (reader.GetValue (0).ToString ());
+				}
+			}
+			dbcon.Close ();
+		}
+		return loadTask (id);
 	}
 
 	private static int getLastId (IDbCommand dbcmd, string tableName) {

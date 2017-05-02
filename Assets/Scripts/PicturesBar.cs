@@ -12,7 +12,7 @@ public class PicturesBar : MonoBehaviour {
 	private bool isEditor = false;
 
 
-	private Vector3[] picturePositions = { new Vector3 (-6.3f, 0, -1), new Vector3 (-4.2f, 0, -1), new Vector3 (-2.1f, 0, -1), new Vector3 (0, 0, -1), new Vector3 (2.1f, 0, -1), new Vector3 (4.2f, 0, -1), new Vector3 (6.3f, 0, -1)};
+	private Vector3[] picturePositions = { new Vector3 (-6.3f, 0, -2), new Vector3 (-4.2f, 0, -2), new Vector3 (-2.1f, 0, -2), new Vector3 (0, 0, -2), new Vector3 (2.1f, 0, -2), new Vector3 (4.2f, 0, -2), new Vector3 (6.3f, 0, -1)};
 
 	void Awake () {
 

@@ -32,6 +32,10 @@ public class EditionModel : MonoBehaviour {
 	private Transform backgroundsLayout;
 	[SerializeField]
 	private GameObject saveMenu;
+	[SerializeField]
+	private UnityEngine.UI.InputField taskTitleImput;
+	[SerializeField]
+	private UnityEngine.UI.InputField taskDescriptionImput;
 
 	private GamePicture currentPcture = null;
 	private string taskTitle = "";
@@ -161,7 +165,10 @@ public class EditionModel : MonoBehaviour {
 		task.setGamePictures (picturesBar.getGamePictures ());
 		if (!asNew && DataTransfer.Task != null)
 			task.DBId = DataTransfer.Task.DBId;
-		DBWorker.saveTask (task);
+		DataTransfer.Task = task;
+		DataTransfer.Task.DBId = DBWorker.saveTask (task);
+		//DataTransfer.Task = DBWorker.loadLastAddedTask ();
+		showSaveMenu (false);
 	}
 
 	/*
@@ -216,6 +223,10 @@ public class EditionModel : MonoBehaviour {
 	}
 
 	public void showSaveMenu (bool val) {
+		if (val == true && DataTransfer.Task != null) {
+			taskTitleImput.text = DataTransfer.Task.Name;
+			taskDescriptionImput.text = DataTransfer.Task.Description;
+		}
 		saveMenu.SetActive (val);
 	}
 }
