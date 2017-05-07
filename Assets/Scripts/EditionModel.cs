@@ -224,8 +224,8 @@ public class EditionModel : MonoBehaviour {
 
 	public void showSaveMenu (bool val) {
 		if (val == true && DataTransfer.Task != null) {
-			taskTitleImput.text = DataTransfer.Task.Name;
-			taskDescriptionImput.text = DataTransfer.Task.Description;
+			taskTitle = taskTitleImput.text = DataTransfer.Task.Name;
+			taskDescription = taskDescriptionImput.text = DataTransfer.Task.Description;
 		}
 		saveMenu.SetActive (val);
 	}

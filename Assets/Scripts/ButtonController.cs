@@ -62,7 +62,8 @@ public class ButtonController : MonoBehaviour {
 	}
 
 	private void showMenuAction () {
-		menu.SetActive (true);
+		//menu.SetActive (true);
+		Application.LoadLevel (3);
 	}
 
 	private void playAction () {
