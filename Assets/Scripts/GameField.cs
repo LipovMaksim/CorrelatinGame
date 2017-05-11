@@ -8,6 +8,8 @@ public class GameField : MonoBehaviour {
 	private GamePicture gamePicturePrefab;
 	[SerializeField]
 	private Color pictureShadowColor;
+	[SerializeField]
+	private Color pictureHalfColor;
 
 	public static float wUnitsField = 10;
 	public static float hUnitsField = 7;
@@ -87,7 +89,7 @@ public class GameField : MonoBehaviour {
 		return gp;
 	}*/
 
-	public GamePicture createPicture (GamePictureInfo gpi, bool shadow = true) {
+	public GamePicture createPicture (GamePictureInfo gpi, int type = 2) {
 		GamePicture gp = Instantiate (gamePicturePrefab, new Vector3 (gpi.Position.x, gpi.Position.y, -1f), transform.rotation, transform) as GamePicture;
 		gp.transform.localPosition = new Vector3 (gpi.Position.x, gpi.Position.y, -1);
 		gamePictures.Add (gp);
@@ -96,8 +98,11 @@ public class GameField : MonoBehaviour {
 		gp.setRotation (gpi.Angle);
 		gp.setFlipX (gpi.FlipX);
 		gp.setFlipY (gpi.FlipY);
-		if (shadow)
+		if (type == 1) {
 			gp.setSpriteColor (pictureShadowColor);
+		} else if (type == 0) {
+			gp.setSpriteColor (pictureHalfColor);
+		}
 		return gp;
 	}
 
@@ -109,7 +114,7 @@ public class GameField : MonoBehaviour {
 		setBackgroundImg (task.BackgroundImg);
 		GamePictureInfo[] gps = task.getGamePictures ();
 		for (int i = 0; i < gps.Length && gps [i] != null; i++) {
-			createPicture (gps [i]);
+			createPicture (gps [i], task.Type);
 		}
 	}
 

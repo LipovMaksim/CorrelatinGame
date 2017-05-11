@@ -15,9 +15,9 @@ public class EditionModel : MonoBehaviour {
 	[SerializeField]
 	private Transform basket;
 	[SerializeField]
-	private Slider sizeSlider;
+	private UnityEngine.UI.Slider sizeSlider;
 	[SerializeField]
-	private Slider rotationSlider;
+	private UnityEngine.UI.Slider rotationSlider;
 	[SerializeField]
 	private GameObject imagesCanvas;
 	[SerializeField]
@@ -33,9 +33,16 @@ public class EditionModel : MonoBehaviour {
 	[SerializeField]
 	private GameObject saveMenu;
 	[SerializeField]
+	private GameObject pall;
+	[SerializeField]
+	private GameObject canvasPall;
+	[SerializeField]
 	private UnityEngine.UI.InputField taskTitleImput;
 	[SerializeField]
 	private UnityEngine.UI.InputField taskDescriptionImput;
+	[SerializeField]
+	private UnityEngine.UI.Dropdown type;
+
 
 	private GamePicture currentPcture = null;
 	private string taskTitle = "";
@@ -45,8 +52,8 @@ public class EditionModel : MonoBehaviour {
 
 		btnController.mirrorVertButtnPresed += mirrorVertCurrentPicture;
 		btnController.mirrorHorButtnPresed += mirrorHorCurrentPicture;
-		sizeSlider.valueChanged += sizeSliderValueChanged;
-		rotationSlider.valueChanged += rotationSliderValueChanged;
+		//sizeSlider.valueChanged += sizeSliderValueChanged;
+		//rotationSlider.valueChanged += rotationSliderValueChanged;
 		picturesBar.pictureDroped += pictureDroped;
 
 
@@ -139,19 +146,27 @@ public class EditionModel : MonoBehaviour {
 
 		picturesBar.addPicture (imgData);
 		imagesCanvas.SetActive (false);
+		freez (false);
 	}
 
 	public void setBackgroundImage (ImageData imgData) {
 		field.setBackgroundImg (imgData);
 		backgroundsCanvas.SetActive (false);
+		freez (false);
 	}
 
 	public void showAddPicture () {
-		imagesCanvas.SetActive (true);
+		if (!(saveMenu.active || backgroundsCanvas.active || imagesCanvas.active)) {
+			imagesCanvas.SetActive (true);
+			freez ();
+		}
 	}
 
 	public void showSetBackground () {
-		backgroundsCanvas.SetActive (true);
+		if (!(saveMenu.active || backgroundsCanvas.active || imagesCanvas.active)) {
+			backgroundsCanvas.SetActive (true);
+			freez ();
+		}
 	}
 
 	/*
@@ -161,7 +176,7 @@ public class EditionModel : MonoBehaviour {
 	}*/
 
 	public void saveTask (bool asNew) {
-		Task task = new Task (taskTitle, taskDescription, field.BackgroundId);
+		Task task = new Task (taskTitle, taskDescription, field.BackgroundId, type.value);
 		task.setGamePictures (picturesBar.getGamePictures ());
 		if (!asNew && DataTransfer.Task != null)
 			task.DBId = DataTransfer.Task.DBId;
@@ -169,6 +184,7 @@ public class EditionModel : MonoBehaviour {
 		DataTransfer.Task.DBId = DBWorker.saveTask (task);
 		//DataTransfer.Task = DBWorker.loadLastAddedTask ();
 		showSaveMenu (false);
+		freez (false);
 	}
 
 	/*
@@ -189,29 +205,37 @@ public class EditionModel : MonoBehaviour {
 			}
 			currentPcture = gp;
 			currentPcture.setCurrent ();
-			sizeSlider.setValue (currentPcture.getSize ());
-			rotationSlider.setValue (currentPcture.getRotationAngle());
+			sizeSlider.value = (currentPcture.getSize ());
+			rotationSlider.value =  (currentPcture.getRotationAngle());
 		}
 	}
 
 	private void mirrorVertCurrentPicture () {
-		if (currentPcture != null)
-			currentPcture.flipX ();
+		if (!(saveMenu.active || backgroundsCanvas.active || imagesCanvas.active)) {
+			if (currentPcture != null)
+				currentPcture.flipX ();
+		}
 	}
 
 	private void mirrorHorCurrentPicture () {
-		if (currentPcture != null)
-			currentPcture.flipY ();
+		if (!(saveMenu.active || backgroundsCanvas.active || imagesCanvas.active)) {
+			if (currentPcture != null)
+				currentPcture.flipY ();
+		}
 	}
 
-	private void sizeSliderValueChanged (float val) {
-		if (currentPcture != null)
-			currentPcture.setSize (val);
+	public void sizeSliderValueChanged (UnityEngine.UI.Slider slider) {
+		if (!(saveMenu.active || backgroundsCanvas.active || imagesCanvas.active)) {
+			if (currentPcture != null)
+				currentPcture.setSize (slider.value);
+		}
 	}
 
-	private void rotationSliderValueChanged (float val) {
-		if (currentPcture != null)
-			currentPcture.setRotation (val);
+	public void rotationSliderValueChanged (UnityEngine.UI.Slider slider) {
+		if (!(saveMenu.active || backgroundsCanvas.active || imagesCanvas.active)) {
+			if (currentPcture != null)
+				currentPcture.setRotation (slider.value);
+		}
 	}
 
 	public void taskTitleChaged (UnityEngine.UI.Text text) {
@@ -223,11 +247,20 @@ public class EditionModel : MonoBehaviour {
 	}
 
 	public void showSaveMenu (bool val) {
-		if (val == true && DataTransfer.Task != null) {
-			taskTitle = taskTitleImput.text = DataTransfer.Task.Name;
-			taskDescription = taskDescriptionImput.text = DataTransfer.Task.Description;
+		if (!(backgroundsCanvas.active || imagesCanvas.active)) {
+			if (val == true && DataTransfer.Task != null) {
+				taskTitle = taskTitleImput.text = DataTransfer.Task.Name;
+				taskDescription = taskDescriptionImput.text = DataTransfer.Task.Description;
+				type.value = DataTransfer.Task.Type;
+			}
+			saveMenu.SetActive (val);
+			freez (val);
 		}
-		saveMenu.SetActive (val);
+	}
+
+	private void freez (bool f = true) {
+		pall.active = f;
+		canvasPall.active = f;
 	}
 }
 

@@ -7,8 +7,14 @@ using Mono.Data.Sqlite;
 
 
 public class DBWorker {
+	/*
+	static string DBUrl = ( Application.platform != RuntimePlatform.Android ? "URI=file:" + Application.dataPath + "/StreamingAssets/db.bytes" 
+		: "jar:file://" + Application.dataPath + "!/assets/db.bytes" ); // Android: "jar:file://" + Application.dataPath + "!/assets/db.bytes"
+*/
+	static string DBUrl = ( Application.platform != RuntimePlatform.Android ? "URI=file:" + Application.dataPath + "/StreamingAssets/db.bytes" 
+		: "jar:file://" + Application.streamingAssetsPath + "/db.bytes" ); // Android: "jar:file://" + Application.dataPath + "!/assets/db.bytes"
 
-	static string DBUrl = "URI=file:" + Application.dataPath + "/StreamingAssets/db.bytes"; // Android: "jar:file://" + Application.dataPath + "!/assets/db.bytes"
+	//static string DBUrl = "jar:file://" + Application.dataPath + "!/assets/db.bytes";
 
 	public static Task loadTask (int taskId) {
 		using (IDbConnection dbcon = (IDbConnection) new SqliteConnection(DBUrl)) {
@@ -18,7 +24,7 @@ public class DBWorker {
 				dbcmd.CommandText = SELECT_TASK.Replace("{task_id}", "" + taskId);
 				using (IDataReader reader = dbcmd.ExecuteReader()) {
 					byte [] buf = (byte[]) reader["img"];
-					task = new Task ((string) reader ["title"], (string) reader ["description"], loadImg(buf), taskId);
+					task = new Task ((string) reader ["title"], (string) reader ["description"], loadImg(buf), taskId, (int) reader ["type"]);
 				}
 				task.setGamePictures(loadPictures(dbcmd, taskId));
 			}
@@ -60,7 +66,7 @@ public class DBWorker {
 			dbcon.Open ();
 			using (IDbCommand dbcmd = dbcon.CreateCommand()) {
 				{
-					dbcmd.CommandText = INSERT_TASK.Replace("{background_id}", "" + task.BackgroundId).Replace("{title}", task.Name).Replace("{description}", task.Description);
+					dbcmd.CommandText = INSERT_TASK.Replace("{background_id}", "" + task.BackgroundId).Replace("{title}", task.Name).Replace("{description}", task.Description).Replace("{type}", "" + task.Type);
 					dbcmd.ExecuteNonQuery();
 
 					id = getLastId (dbcmd, "Tasks");
@@ -119,7 +125,7 @@ public class DBWorker {
 				using (IDataReader reader = dbcmd.ExecuteReader()) {
 					while (reader.Read ()) {
 						byte [] buf = (byte[]) reader["img"];
-						tasks.Add (new Task ((string) reader ["title"], (string) reader ["description"], loadImg(buf), int.Parse (reader.GetValue (0).ToString()), int.Parse (reader.GetValue (1).ToString())));
+						tasks.Add (new Task ((string) reader ["title"], (string) reader ["description"], loadImg(buf), int.Parse (reader.GetValue (0).ToString()), int.Parse (reader.GetValue (1).ToString()), int.Parse (reader ["type"].ToString())));
 					}
 				}
 				res = tasks.ToArray ();
@@ -189,17 +195,35 @@ public class DBWorker {
 		}
 	}
 
-	const string SELECT_TASK = "SELECT img, title, description FROM Backgrounds, Tasks WHERE Backgrounds.id = (SELECT background_id FROM Tasks WHERE id = {task_id}) and Tasks.id = {task_id}";
+	public static User getTeacher (string login, string pwd) {
+		using (IDbConnection dbcon = (IDbConnection) new SqliteConnection(DBUrl)) {
+			dbcon.Open ();
+			using (IDbCommand dbcmd = dbcon.CreateCommand()) {
+				dbcmd.CommandText = SELECT_TEACHER.Replace ("{login}",login).Replace ("{password}", pwd);
+				using (IDataReader reader = dbcmd.ExecuteReader()) {
+					if (reader.Read ()) {
+						return new User (int.Parse (reader.GetValue (0).ToString ()), login, pwd, (string)reader ["fio"]); 
+					}
+					return null;
+				}
+			}
+			dbcon.Close ();
+		}
+		return null;
+	}
+
+	const string SELECT_TASK = "SELECT img, title, description, type FROM Backgrounds, Tasks WHERE Backgrounds.id = (SELECT background_id FROM Tasks WHERE id = {task_id}) and Tasks.id = {task_id}";
 	const string SELECT_PICTURES = "SELECT Game_pictures.id, picture_id, size, angle, x, y, flip_x, flip_y, img FROM Game_pictures, Pictures WHERE Game_pictures.task_id = {task_id} and Pictures.id = Game_pictures.picture_id";
 	const string SELECT_TASK_ID = "SELECT id FROM Tasks WHERE background_id = {background_id} and title = '{title}' and description = '{description}'";
-	const string INSERT_TASK = "INSERT INTO Tasks (background_id, title, description) VALUES ({background_id}, \'{title}\', \'{description}\')";
+	const string INSERT_TASK = "INSERT INTO Tasks (background_id, title, description, type) VALUES ({background_id}, \'{title}\', \'{description}\', '{type}')";
 	const string INSERT_GAME_PICTURE = "INSERT INTO Game_pictures (picture_id, size, angle, x, y, flip_x, flip_y, task_id) VALUES ({picture_id}, {size}, {angle}, {x}, {y}, {flip_x}, {flip_y}, {task_id})";
-	const string SELECT_ALL_TASKS = "SELECT Tasks.id, Backgrounds.id, img, title, description FROM Backgrounds, Tasks WHERE Backgrounds.id = Tasks.background_id ORDER BY title";
+	const string SELECT_ALL_TASKS = "SELECT Tasks.id, Backgrounds.id, img, title, description, type FROM Backgrounds, Tasks WHERE Backgrounds.id = Tasks.background_id ORDER BY title";
 	const string SELECT_ALL_PICTURES = "SELECT id, img FROM Pictures";
 	const string SELECT_ALL_BACKGROUDS = "SELECT id, img FROM Backgrounds";
 	const string SELECT_LAST_ID = "SELECT last_insert_rowid() FROM {table_name}";
 	const string DELETE_ROW_FROM_TABLE_BY_ID = "DELETE FROM {table} WHERE id = {id}";
 	const string DELETE_GAMEPICTURES_BY_TASK_ID = "DELETE FROM Game_pictures WHERE task_id = {task_id}";
+	const string SELECT_TEACHER = "SELECT id, fio FROM Teachers WHERE login = \'{login}\' AND password = \'{password}\'";
 }
 
 public class Pair <T, U> {

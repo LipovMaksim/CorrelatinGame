@@ -15,21 +15,25 @@ public class Task {
 	public Texture2D BackgroundImg { get { return backgroundImg;} set { backgroundImg = value;}}
 	private int backgroundId;
 	public int BackgroundId { get { return backgroundId; } set { backgroundId = value; } }
+	private int type; // 0 - полупрозрачное, 1 - тень, 2 - исходное
+	public int Type { get { return type; } set { type = value; }}
 	private GamePictureInfo[] gamePictures = new GamePictureInfo[PICTURES_SIZE];
 
-	public Task (string n, string d = "", Texture2D bi = null, int id = -1, int bgId = -1) {
+	public Task (string n, string d = "", Texture2D bi = null, int id = -1, int bgId = -1, int t = 0) {
 		name = n;
 		description = d;
 		backgroundImg = bi;
 		dbId = id;
 		backgroundId = bgId;
+		type = t;
 	}
 
-	public Task (string n, string d, int bgId, int id = -1) {
+	public Task (string n, string d, int bgId, int t, int id = -1) {
 		name = n;
 		description = d;
 		backgroundId = bgId;
 		dbId = id;
+		type = t;
 	}
 
 	public bool addGamePicture (GamePictureInfo gpi) {
