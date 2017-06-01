@@ -14,12 +14,15 @@ public class User{
 	public string FIO { get { return fio;} set { fio = value;}}
 	private string birthDate;
 	public string BirthDate { get { return birthDate;} set { birthDate = value;}}
+	private bool isTeacher;
+	public bool IsTeacher { get { return isTeacher; } set { isTeacher = value; } }
 
 	private User () {
 
 	}
 
-	public User (int id, string login, string pwd, string fio, string birthDate = "") {
+	public User (bool isT, int id, string login, string pwd, string fio, string birthDate = "") {
+		isTeacher = isT;
 		this.id = id;
 		this.login = login;
 		password = pwd;

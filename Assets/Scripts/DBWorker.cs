@@ -195,14 +195,22 @@ public class DBWorker {
 		}
 	}
 
-	public static User getTeacher (string login, string pwd) {
+	public static User getUser (string login, string pwd) {
 		using (IDbConnection dbcon = (IDbConnection) new SqliteConnection(DBUrl)) {
 			dbcon.Open ();
 			using (IDbCommand dbcmd = dbcon.CreateCommand()) {
 				dbcmd.CommandText = SELECT_TEACHER.Replace ("{login}",login).Replace ("{password}", pwd);
 				using (IDataReader reader = dbcmd.ExecuteReader()) {
 					if (reader.Read ()) {
-						return new User (int.Parse (reader.GetValue (0).ToString ()), login, pwd, (string)reader ["fio"]); 
+						return new User (true, int.Parse (reader.GetValue (0).ToString ()), login, pwd, (string)reader ["fio"]); 
+					}
+					//return null;
+				}
+
+				dbcmd.CommandText = SELECT_CHILD.Replace ("{login}",login).Replace ("{password}", pwd);
+				using (IDataReader reader = dbcmd.ExecuteReader()) {
+					if (reader.Read ()) {
+						return new User (false, int.Parse (reader.GetValue (0).ToString ()), login, pwd, (string)reader ["fio"], (string)reader ["birth_year"]); 
 					}
 					return null;
 				}
@@ -224,6 +232,7 @@ public class DBWorker {
 	const string DELETE_ROW_FROM_TABLE_BY_ID = "DELETE FROM {table} WHERE id = {id}";
 	const string DELETE_GAMEPICTURES_BY_TASK_ID = "DELETE FROM Game_pictures WHERE task_id = {task_id}";
 	const string SELECT_TEACHER = "SELECT id, fio FROM Teachers WHERE login = \'{login}\' AND password = \'{password}\'";
+	const string SELECT_CHILD = "SELECT id, fio, birth_year FROM Children WHERE login = \'{login}\' AND password = \'{password}\'";
 }
 
 public class Pair <T, U> {

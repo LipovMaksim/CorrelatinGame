@@ -14,7 +14,7 @@ public class LoginModel : MonoBehaviour {
 	}
 
 	public void login () {
-		DataTransfer.CurrentUser = DBWorker.getTeacher (name.text, pwd.text);
+		DataTransfer.CurrentUser = DBWorker.getUser (name.text, pwd.text);
 		if (DataTransfer.CurrentUser != null) {
 			Application.LoadLevel (0);
 		}
