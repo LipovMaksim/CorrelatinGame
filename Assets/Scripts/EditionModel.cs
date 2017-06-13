@@ -43,6 +43,13 @@ public class EditionModel : MonoBehaviour {
 	[SerializeField]
 	private UnityEngine.UI.Dropdown type;
 
+	[SerializeField]
+	private GameObject backgroundError;
+	[SerializeField]
+	private GameObject noObjectsOnFieldError;
+	[SerializeField]
+	private GameObject enterTitleError;
+
 
 	private GamePicture currentPcture = null;
 	private string taskTitle = "";
@@ -95,6 +102,7 @@ public class EditionModel : MonoBehaviour {
 
 			//Перемешение на поле
 			if (field.contanes (gp)) {
+				noObjectsOnFieldError.active = false;
 				return;
 			}
 
@@ -118,13 +126,22 @@ public class EditionModel : MonoBehaviour {
 	}
 
 	private void toMainMenu(){
-		Application.LoadLevel (0);
+		Application.LoadLevel (4);
 	}
 
 	public void toTaskList () {
 		Application.LoadLevel (3);
 	}
-		
+
+	public void hideBackgroundCanvas() {
+		backgroundsCanvas.SetActive (false);
+		freez (false);
+	}
+
+	public void hideGameObjectCanvas() {
+		imagesCanvas.SetActive (false);
+		freez (false);
+	}
 
 	private void openBackgroundImg(string path){
 		
@@ -153,6 +170,7 @@ public class EditionModel : MonoBehaviour {
 		field.setBackgroundImg (imgData);
 		backgroundsCanvas.SetActive (false);
 		freez (false);
+		backgroundError.active = false;
 	}
 
 	public void showAddPicture () {
@@ -176,15 +194,23 @@ public class EditionModel : MonoBehaviour {
 	}*/
 
 	public void saveTask (bool asNew) {
-		Task task = new Task (taskTitle, taskDescription, field.BackgroundId, type.value);
-		task.setGamePictures (picturesBar.getGamePictures ());
-		if (!asNew && DataTransfer.Task != null)
-			task.DBId = DataTransfer.Task.DBId;
-		DataTransfer.Task = task;
-		DataTransfer.Task.DBId = DBWorker.saveTask (task);
-		//DataTransfer.Task = DBWorker.loadLastAddedTask ();
-		showSaveMenu (false);
-		freez (false);
+		if (taskTitle != null && taskTitle.Length > 0) {
+			Task task = new Task (taskTitle, taskDescription, field.BackgroundId, type.value);
+			task.setGamePictures (picturesBar.getGamePictures ());
+			if (!asNew && DataTransfer.Task != null)
+				task.DBId = DataTransfer.Task.DBId;
+			DataTransfer.Task = task;
+			DataTransfer.Task.DBId = DBWorker.saveTask (task);
+			//DataTransfer.Task = DBWorker.loadLastAddedTask ();
+			showSaveMenu (false);
+			freez (false);
+		} else {
+			enterTitleError.active = true;
+		}
+	}
+
+	public void hideTaskTitleError () {
+		enterTitleError.active = false;
 	}
 
 	/*
@@ -247,7 +273,11 @@ public class EditionModel : MonoBehaviour {
 	}
 
 	public void showSaveMenu (bool val) {
-		if (!(backgroundsCanvas.active || imagesCanvas.active)) {
+		if (field.BackgroundId == -1) {
+			backgroundError.active = true;
+		} else if ( getPicturesOnField().Length == 0 ) {
+			noObjectsOnFieldError.active = true;
+		} else if (!(backgroundsCanvas.active || imagesCanvas.active)) {
 			if (val == true && DataTransfer.Task != null) {
 				taskTitle = taskTitleImput.text = DataTransfer.Task.Name;
 				taskDescription = taskDescriptionImput.text = DataTransfer.Task.Description;
@@ -261,6 +291,20 @@ public class EditionModel : MonoBehaviour {
 	private void freez (bool f = true) {
 		pall.active = f;
 		canvasPall.active = f;
+	}
+
+	private GamePicture [] getPicturesOnField () {
+		List<GamePicture> res = new List<GamePicture>();
+		GamePicture[] gps = picturesBar.getGamePicturesObj ();
+
+		for (int i = 0; i < gps.Length; i++) {
+			if (gps [i].isActive ()) {
+				if (field.contanes(gps[i])) {
+					res.Add (gps [i]);
+				}
+			}
+		}
+		return res.ToArray ();
 	}
 }
 

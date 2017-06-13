@@ -5,7 +5,7 @@ using UnityEngine;
 public class User{
 
 	private int id; 
-	public int Id {get { return id;}}
+	public int Id {get { return id;} set { id = value; }}
 	private string login; 
 	public string Login { get { return login;} set { login = value;}} 
 	private string password; 
@@ -16,6 +16,8 @@ public class User{
 	public string BirthDate { get { return birthDate;} set { birthDate = value;}}
 	private bool isTeacher;
 	public bool IsTeacher { get { return isTeacher; } set { isTeacher = value; } }
+
+	public List<int> currentTasks = new List<int> ();
 
 	private User () {
 

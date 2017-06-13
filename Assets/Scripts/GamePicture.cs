@@ -128,8 +128,8 @@ public class GamePicture : DraggableObject {
 		sr.sprite = sprite;
 	}
 
-	public void activate () {
-		GetComponent<CircleCollider2D> ().enabled = true;
+	public void activate (bool f = true) {
+		GetComponent<CircleCollider2D> ().enabled = f;
 		//transform.position = positionInToolBar;
 	}
 

@@ -15,27 +15,28 @@ public class GameModel : MonoBehaviour {
 	[SerializeField]
 	private Transform menu;
 
+	[SerializeField]
+	private GameObject continueBtn;
+	[SerializeField]
+	private GameObject repeatBtn;
+	[SerializeField]
+	private GameObject toMainMenuBtn;
 
 	//private Dictionary <GamePicture, Vector3> gamePicturePlaces = new Dictionary<GamePicture, Vector3>();
 	private bool gameIsActive = true;
+	private Task currentTask;
 	private string gameUrl = "Components\\Levels\\test.cglvl";
+	private System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch ();
+	private int misstakes = 0;
+
 	void Awake () {
-
-		string name = "", description = "";
-		//FileWorker.readLevelFromFileForGame (gameUrl, ref gameField, ref pictures, ref name, ref description); 
-		Task t = DataTransfer.Task;
-		gameField.setTask (t);
-		picturesBar.setTask (t);
+		//DataTransfer.CurrentUser = DBWorker.getUser ("child", "");
+		currentTask = DBWorker.loadTask (DataTransfer.CurrentUser.currentTasks.ToArray ()[0]);
+		gameField.setTask (currentTask);
+		picturesBar.setTask (currentTask);
 		picturesBar.pictureDroped += pictureDroped;
-		//MonoBehaviour[] b = gameField.GetComponents<MonoBehaviour> ();
-		/*gamePicturePlaces.Add (fish, new Vector3 (-3.07F, 1.8F, 0F));
-		gamePicturePlaces.Add (fish2, new Vector3 (-3.07F, 1.8F, 0F));
-
-		fish.draggingEnd += pictureDroped;
-		fish2.draggingEnd += pictureDroped;*/
-		/*toMainMenuButton.toMainMenuButtonPresed += toMainMenu;
-		continueButton.continueButtonPresed += continueGame;
-		menuButton.showMenuButtonPresed += showMenu;*/
+		timer.Start ();
+		misstakes = 0;
 	}
 
 	void pictureDroped (DraggableObject obj, Vector3 position){
@@ -45,13 +46,15 @@ public class GameModel : MonoBehaviour {
 			GamePicture target = gameField.onTargetPositon (gp);
 			if (target != null) {
 				//картинка сопоставлена правильно (музыка, эфекты)
-				audioController.playBubblesSound();
+				audioController.playBubblesSound ();
 				//gamePicturePlaces.Remove(gp);
 				//Destroy (gp.gameObject);
 				target.setTrueColor ();
 				gp.reset ();
 				checkForGameOver ();
 				return;
+			} else {
+				misstakes++;
 			}
 		}
 		gp.returnToPreviousPosition ();
@@ -61,15 +64,24 @@ public class GameModel : MonoBehaviour {
 		if (!picturesBar.hasActivePictures()) {
 			viewController.showCangratulations ();
 			audioController.playVictorySound ();
+			timer.Stop ();
 			gameIsActive = false;
+			repeatBtn.active = true;
+			StartCoroutine (showContinueBtn (3));
+
 		}
+	}
+
+	private IEnumerator showContinueBtn (int sec) {
+		yield return new WaitForSeconds (sec);
+		continueBtn.active = true;
 	}
 
 	void OnMouseUp(){
 		if (!gameIsActive) {
 			gameIsActive = true;
 			viewController.hideCangratulations ();
-			Application.LoadLevel (0);
+			Application.LoadLevel (4);
 		}
 	}
 
@@ -77,14 +89,32 @@ public class GameModel : MonoBehaviour {
 		menu.gameObject.SetActive (false);
 	}
 
-	private void toMainMenu(){
-		Application.LoadLevel (0);
+	public void toMainMenu(){
+		Application.LoadLevel (4);
 	}
 
 	private void showMenu(){
 		menu.gameObject.SetActive (true);
 	}
 
+	public void repeatGame () {
+		Application.LoadLevel (1);
+	}
+
+	public void nextTask () {
+
+		System.DateTime cd = System.DateTime.Now;
+		DBWorker.addHistory(DataTransfer.CurrentUser, new History(DataTransfer.CurrentUser.Id, currentTask.Name, (int)timer.ElapsedMilliseconds/1000, misstakes, 
+			(cd.Day < 10 ? "0" : "") + cd.Day + "." + (cd.Month < 10 ? "0" : "") + cd.Month + "." + cd.Year));
+		DBWorker.removeCurrentTask (DataTransfer.CurrentUser, currentTask); 
+		DataTransfer.CurrentUser.currentTasks.Remove (currentTask.DBId);
+
+		if (DataTransfer.CurrentUser.currentTasks.Count > 0) {
+			repeatGame ();
+		} else {
+			toMainMenu ();
+		}
+	}
 
 	void Update () {
 		

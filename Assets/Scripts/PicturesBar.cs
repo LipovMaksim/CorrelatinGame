@@ -64,4 +64,8 @@ public class PicturesBar : MonoBehaviour {
 		}
 		return gpis.ToArray();
 	}
+
+	public GamePicture [] getGamePicturesObj () {
+		return pictures;
+	}
 }

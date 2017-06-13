@@ -10,10 +10,22 @@ public class MenuModel : MonoBehaviour {
 	private GameObject tasksBtn;
 	[SerializeField]
 	private GameObject childrenBtn;
+	[SerializeField]
+	private Color notActiveColor;
 
+	private bool teacherMod = false;
 
 	void Awake () {
+		//DataTransfer.CurrentUser = DBWorker.getUser ("test", "test");
+		//DataTransfer.CurrentUser = DBWorker.getUser ("child", "");
 		setTeacherMod (DataTransfer.CurrentUser.IsTeacher);
+
+		if (!teacherMod) {
+			if (DataTransfer.CurrentUser.currentTasks.Count == 0) {
+				palyBtn.GetComponent<UnityEngine.UI.Image> ().color = notActiveColor;
+				palyBtn.GetComponent<UnityEngine.UI.Button> ().enabled = false;
+			}
+		}
 	}
 
 	public void toTaskList () {
@@ -21,11 +33,11 @@ public class MenuModel : MonoBehaviour {
 	}
 
 	public void toChildrenList () {
-		//Application.LoadLevel(5);
+		Application.LoadLevel(5);
 	}
 
 	public void toLogin () {
-		Application.LoadLevel(4);
+		Application.LoadLevel(0);
 	}
 
 	public void toGame () {
@@ -39,15 +51,12 @@ public class MenuModel : MonoBehaviour {
 	public void childMod () {
 		setTeacherMod (false);
 	}
-
-	public void teacherMod () {
-		setTeacherMod (true);
-	}
-
+		
 	private void setTeacherMod (bool f) {
 		palyBtn.SetActive (!f);
 		tasksBtn.SetActive (f);
 		childrenBtn.SetActive (f);
+		teacherMod = f;
 	}
 
 }

@@ -8,6 +8,8 @@ public class LoginModel : MonoBehaviour {
 	UnityEngine.UI.InputField name;
 	[SerializeField]
 	UnityEngine.UI.InputField pwd;
+	[SerializeField]
+	UnityEngine.UI.Text errorText;
 
 	public void exit () {
 		Application.Quit ();
@@ -16,7 +18,9 @@ public class LoginModel : MonoBehaviour {
 	public void login () {
 		DataTransfer.CurrentUser = DBWorker.getUser (name.text, pwd.text);
 		if (DataTransfer.CurrentUser != null) {
-			Application.LoadLevel (0);
+			Application.LoadLevel (4);
+		} else {
+			errorText.gameObject.active = true;
 		}
 	}
 }

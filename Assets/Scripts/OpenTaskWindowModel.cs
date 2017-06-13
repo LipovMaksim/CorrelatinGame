@@ -26,7 +26,7 @@ public class OpenTaskWindowModel : MonoBehaviour {
 	}
 
 	public void toMainMenu () {
-		Application.LoadLevel(0);
+		Application.LoadLevel(4);
 	}
 
 	public void openTaskEditor (bool createNewTask) {

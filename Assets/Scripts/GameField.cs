@@ -103,6 +103,7 @@ public class GameField : MonoBehaviour {
 		} else if (type == 0) {
 			gp.setSpriteColor (pictureHalfColor);
 		}
+		gp.activate (false);
 		return gp;
 	}
 
